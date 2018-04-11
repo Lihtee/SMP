@@ -13,7 +13,70 @@
     <edmx:ConceptualModels>
       <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="Model" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
         <EntityContainer Name="ModelContainer" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Project" EntityType="Model.Project" />
+          <EntitySet Name="Person" EntityType="Model.Person" />
+          <EntitySet Name="Team" EntityType="Model.Team" />
+          <AssociationSet Name="PersonTeam" Association="Model.PersonTeam">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="Team" EntitySet="Team" />
+          </AssociationSet>
+          <AssociationSet Name="ProjectTeam" Association="Model.ProjectTeam">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="Team" EntitySet="Team" />
+          </AssociationSet>
+          <AssociationSet Name="ProjectProject" Association="Model.ProjectProject">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="Project1" EntitySet="Project" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="Project">
+          <Key>
+            <PropertyRef Name="IdProject" />
+          </Key>
+          <Property Name="IdProject" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="projectName" Type="String" Nullable="false" />
+          <Property Name="startDateTime" Type="DateTime" Nullable="false" />
+          <Property Name="endDateTime" Type="DateTime" Nullable="false" />
+          <Property Name="description" Type="String" Nullable="false" />
+          <Property Name="isDone" Type="Boolean" Nullable="false" DefaultValue="False" />
+          <NavigationProperty Name="parrentProject" Relationship="Model.ProjectProject" FromRole="Project1" ToRole="Project" />
+        </EntityType>
+        <EntityType Name="Person">
+          <Key>
+            <PropertyRef Name="IdPerson" />
+          </Key>
+          <Property Name="IdPerson" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="firstName" Type="String" Nullable="false" />
+          <Property Name="surName" Type="String" Nullable="true" />
+          <Property Name="middleName" Type="String" Nullable="true" />
+          <Property Name="Position" Type="Model.Position" Nullable="false" />
+        </EntityType>
+        <EnumType Name="Position">
+          <Member Name="Мэнеджер" Value="0" />
+          <Member Name="Исполнитель" Value="1" />
+        </EnumType>
+        <EntityType Name="Team">
+          <Key>
+            <PropertyRef Name="IdTeam" />
+          </Key>
+          <Property Name="IdTeam" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="idPerson" Type="Int32" Nullable="false" />
+          <Property Name="idProject" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Person" Relationship="Model.PersonTeam" FromRole="Team" ToRole="Person" />
+          <NavigationProperty Name="Project" Relationship="Model.ProjectTeam" FromRole="Team" ToRole="Project" />
+        </EntityType>
+        <Association Name="PersonTeam">
+          <End Type="Model.Person" Role="Person" Multiplicity="1" />
+          <End Type="Model.Team" Role="Team" Multiplicity="*" />
+        </Association>
+        <Association Name="ProjectTeam">
+          <End Type="Model.Project" Role="Project" Multiplicity="1" />
+          <End Type="Model.Team" Role="Team" Multiplicity="*" />
+        </Association>
+        <Association Name="ProjectProject">
+          <End Type="Model.Project" Role="Project" Multiplicity="1" />
+          <End Type="Model.Project" Role="Project1" Multiplicity="*" />
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
