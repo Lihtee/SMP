@@ -188,6 +188,7 @@
     <Compile Include="Models\Project.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Repositoryes\ProjectRepository.cs" />
     <Compile Include="Models\Team.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
@@ -282,7 +283,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>24130</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

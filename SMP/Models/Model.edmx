@@ -32,6 +32,7 @@
     <Property Name="endDateTime" Type="datetime" Nullable="false" />
     <Property Name="description" Type="nvarchar(max)" Nullable="true" />
     <Property Name="isDone" Type="bit" Nullable="false" DefaultValue="false" />
+    <Property Name="isClose" Type="bit" Nullable="false" DefaultValue="false" />
     <Property Name="parrentProject_IdProject" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Person">
@@ -121,6 +122,7 @@
           <Property Name="endDateTime" Type="DateTime" Nullable="false" />
           <Property Name="description" Type="String" Nullable="true" />
           <Property Name="isDone" Type="Boolean" Nullable="false" DefaultValue="False" />
+          <Property Name="isClose" Type="Boolean" Nullable="false" DefaultValue="False" />
           <NavigationProperty Name="parrentProject" Relationship="Model.ProjectProject" FromRole="Project1" ToRole="Project" />
         </EntityType>
         <EntityType Name="Person">
@@ -174,6 +176,7 @@
           <ScalarProperty Name="endDateTime" ColumnName="endDateTime" />
           <ScalarProperty Name="description" ColumnName="description" />
           <ScalarProperty Name="isDone" ColumnName="isDone" />
+          <ScalarProperty Name="isClose" ColumnName="isClose" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

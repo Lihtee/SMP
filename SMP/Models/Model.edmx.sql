@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 04/11/2018 19:24:52
+-- Date Created: 04/12/2018 09:24:44
 -- Generated from EDMX file: D:\HSE\3Course\SMP\SMP\Models\Model.edmx
 -- --------------------------------------------------
 
@@ -53,6 +53,7 @@ CREATE TABLE [dbo].[Project] (
     [endDateTime] datetime  NOT NULL,
     [description] nvarchar(max)  NULL,
     [isDone] bit  NOT NULL,
+    [isClose] bit  NOT NULL,
     [parrentProject_IdProject] int  NOT NULL
 );
 GO
