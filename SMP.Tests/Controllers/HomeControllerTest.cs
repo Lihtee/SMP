@@ -26,8 +26,17 @@ namespace SMP.Tests.Controllers
         }
 
         [TestMethod]
-        
+        public void Index2()
+        {
+            // Arrange
+            HomeController controller = new HomeController();
 
+            // Act
+            ViewResult result = controller.Index() as ViewResult;
+
+            // Assert
+            Assert.IsNotNull(result);
+        }
 
         [TestMethod]
         public void About()
