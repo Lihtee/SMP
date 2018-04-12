@@ -36,6 +36,8 @@ namespace SMP.Tests.Controllers
 
             // Assert
             Assert.IsNotNull(result);
+            //Test comment
+
         }
 
         [TestMethod]
