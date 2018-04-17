@@ -10,11 +10,13 @@ namespace SMP.Models
     {
         private ModelContainer cont;
         public ProjectRepository projectRepository;
+        public TeamRepository teamRepository;
 
         public DataManager()
         {
             cont = new ModelContainer();
             projectRepository = new ProjectRepository(cont);
+            teamRepository = new TeamRepository(cont);
         }
     }
 }
