@@ -18,7 +18,7 @@ namespace SMP.Models.Repositoryes
         /// Возвращает список всех проектов
         /// </summary>
         /// <returns>Список всех проектов</returns>
-        public List<Project> Projects()
+        public List<Project> GetProjects()
         {
             return cont.Project.OrderBy(p => p.IdProject).ToList();
         }
