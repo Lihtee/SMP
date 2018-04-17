@@ -9,6 +9,7 @@
     <EntitySet Name="Project" EntityType="Model.Store.Project" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Person" EntityType="Model.Store.Person" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Team" EntityType="Model.Store.Team" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Addiction" EntityType="Model.Store.Addiction" store:Type="Tables" Schema="dbo" />
     <AssociationSet Name="PersonTeam" Association="Model.Store.PersonTeam">
       <End Role="Person" EntitySet="Person" />
       <End Role="Team" EntitySet="Team" />
@@ -20,6 +21,14 @@
     <AssociationSet Name="ProjectProject" Association="Model.Store.ProjectProject">
       <End Role="Project" EntitySet="Project" />
       <End Role="Project1" EntitySet="Project" />
+    </AssociationSet>
+    <AssociationSet Name="ProjectAddiction" Association="Model.Store.ProjectAddiction">
+      <End Role="Project" EntitySet="Project" />
+      <End Role="Addiction" EntitySet="Addiction" />
+    </AssociationSet>
+    <AssociationSet Name="ProjectAddiction1" Association="Model.Store.ProjectAddiction1">
+      <End Role="Project" EntitySet="Project" />
+      <End Role="Addiction" EntitySet="Addiction" />
     </AssociationSet>
   </EntityContainer>
   <EntityType Name="Project">
@@ -33,6 +42,8 @@
     <Property Name="description" Type="nvarchar(max)" Nullable="true" />
     <Property Name="isDone" Type="bit" Nullable="false" DefaultValue="false" />
     <Property Name="isClose" Type="bit" Nullable="false" DefaultValue="false" />
+    <Property Name="plannedBudget" Type="decimal" Nullable="true" />
+    <Property Name="realBudget" Type="decimal" Nullable="true" />
     <Property Name="parrentProject_IdProject" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Person">
@@ -54,6 +65,14 @@
     <Property Name="idProject" Type="int" Nullable="false" />
     <Property Name="Person_IdPerson" Type="int" Nullable="false" />
     <Property Name="Project_IdProject" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Addiction">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="lastProject_IdProject" Type="int" Nullable="false" />
+    <Property Name="nextProject_IdProject" Type="int" Nullable="false" />
   </EntityType>
   <Association Name="PersonTeam">
     <End Role="Person" Type="Model.Store.Person" Multiplicity="1" />
@@ -91,6 +110,30 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="ProjectAddiction">
+    <End Role="Project" Type="Model.Store.Project" Multiplicity="1" />
+    <End Role="Addiction" Type="Model.Store.Addiction" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Project">
+        <PropertyRef Name="IdProject" />
+      </Principal>
+      <Dependent Role="Addiction">
+        <PropertyRef Name="lastProject_IdProject" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="ProjectAddiction1">
+    <End Role="Project" Type="Model.Store.Project" Multiplicity="1" />
+    <End Role="Addiction" Type="Model.Store.Addiction" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Project">
+        <PropertyRef Name="IdProject" />
+      </Principal>
+      <Dependent Role="Addiction">
+        <PropertyRef Name="nextProject_IdProject" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
 </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
@@ -111,6 +154,15 @@
             <End Role="Project" EntitySet="Project" />
             <End Role="Project1" EntitySet="Project" />
           </AssociationSet>
+          <EntitySet Name="Addiction" EntityType="Model.Addiction" />
+          <AssociationSet Name="ProjectAddiction" Association="Model.ProjectAddiction">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="Addiction" EntitySet="Addiction" />
+          </AssociationSet>
+          <AssociationSet Name="ProjectAddiction1" Association="Model.ProjectAddiction1">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="Addiction" EntitySet="Addiction" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Project">
           <Key>
@@ -124,6 +176,8 @@
           <Property Name="isDone" Type="Boolean" Nullable="false" DefaultValue="False" />
           <Property Name="isClose" Type="Boolean" Nullable="false" DefaultValue="False" />
           <NavigationProperty Name="parrentProject" Relationship="Model.ProjectProject" FromRole="Project1" ToRole="Project" />
+          <Property Name="plannedBudget" Type="Decimal" Nullable="true" />
+          <Property Name="realBudget" Type="Decimal" Nullable="true" />
         </EntityType>
         <EntityType Name="Person">
           <Key>
@@ -161,6 +215,22 @@
           <End Type="Model.Project" Role="Project" Multiplicity="1" />
           <End Type="Model.Project" Role="Project1" Multiplicity="*" />
         </Association>
+        <EntityType Name="Addiction">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="lastProject" Relationship="Model.ProjectAddiction" FromRole="Addiction" ToRole="Project" />
+          <NavigationProperty Name="nextProject" Relationship="Model.ProjectAddiction1" FromRole="Addiction" ToRole="Project" />
+        </EntityType>
+        <Association Name="ProjectAddiction">
+          <End Type="Model.Project" Role="Project" Multiplicity="1" />
+          <End Type="Model.Addiction" Role="Addiction" Multiplicity="*" />
+        </Association>
+        <Association Name="ProjectAddiction1">
+          <End Type="Model.Project" Role="Project" Multiplicity="1" />
+          <End Type="Model.Addiction" Role="Addiction" Multiplicity="*" />
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -177,6 +247,8 @@
           <ScalarProperty Name="description" ColumnName="description" />
           <ScalarProperty Name="isDone" ColumnName="isDone" />
           <ScalarProperty Name="isClose" ColumnName="isClose" />
+          <ScalarProperty Name="plannedBudget" ColumnName="plannedBudget" />
+          <ScalarProperty Name="realBudget" ColumnName="realBudget" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -197,6 +269,13 @@
           <ScalarProperty Name="IdTeam" ColumnName="IdTeam" />
           <ScalarProperty Name="idPerson" ColumnName="idPerson" />
           <ScalarProperty Name="idProject" ColumnName="idProject" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Addiction">
+      <EntityTypeMapping TypeName="IsTypeOf(Model.Addiction)">
+        <MappingFragment StoreEntitySet="Addiction">
+          <ScalarProperty Name="Id" ColumnName="Id" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -222,6 +301,22 @@
       </EndProperty>
       <EndProperty Name="Project1">
         <ScalarProperty Name="IdProject" ColumnName="IdProject" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="ProjectAddiction" TypeName="Model.ProjectAddiction" StoreEntitySet="Addiction">
+      <EndProperty Name="Project">
+        <ScalarProperty Name="IdProject" ColumnName="lastProject_IdProject" />
+      </EndProperty>
+      <EndProperty Name="Addiction">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="ProjectAddiction1" TypeName="Model.ProjectAddiction1" StoreEntitySet="Addiction">
+      <EndProperty Name="Project">
+        <ScalarProperty Name="IdProject" ColumnName="nextProject_IdProject" />
+      </EndProperty>
+      <EndProperty Name="Addiction">
+        <ScalarProperty Name="Id" ColumnName="Id" />
       </EndProperty>
     </AssociationSetMapping>
   </EntityContainerMapping>

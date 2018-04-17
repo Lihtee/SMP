@@ -28,5 +28,6 @@ namespace SMP.Models
         public virtual DbSet<Project> Project { get; set; }
         public virtual DbSet<Person> Person { get; set; }
         public virtual DbSet<Team> Team { get; set; }
+        public virtual DbSet<Addiction> Addiction { get; set; }
     }
 }

@@ -11,6 +11,9 @@
         <AssociationConnector Association="Model.PersonTeam" />
         <AssociationConnector Association="Model.ProjectTeam" />
         <AssociationConnector Association="Model.ProjectProject" />
+        <EntityTypeShape EntityType="Model.Addiction" Width="1.5" PointX="0.75" PointY="4.375" />
+        <AssociationConnector Association="Model.ProjectAddiction" />
+        <AssociationConnector Association="Model.ProjectAddiction1" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

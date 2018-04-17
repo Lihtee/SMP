@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 04/12/2018 09:24:44
+-- Date Created: 04/16/2018 20:20:50
 -- Generated from EDMX file: D:\HSE\3Course\SMP\SMP\Models\Model.edmx
 -- --------------------------------------------------
 
@@ -54,6 +54,8 @@ CREATE TABLE [dbo].[Project] (
     [description] nvarchar(max)  NULL,
     [isDone] bit  NOT NULL,
     [isClose] bit  NOT NULL,
+    [plannedBudget] decimal(18,0)  NULL,
+    [realBudget] decimal(18,0)  NULL,
     [parrentProject_IdProject] int  NOT NULL
 );
 GO
@@ -78,6 +80,14 @@ CREATE TABLE [dbo].[Team] (
 );
 GO
 
+-- Creating table 'Addiction'
+CREATE TABLE [dbo].[Addiction] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [lastProject_IdProject] int  NOT NULL,
+    [nextProject_IdProject] int  NOT NULL
+);
+GO
+
 -- --------------------------------------------------
 -- Creating all PRIMARY KEY constraints
 -- --------------------------------------------------
@@ -98,6 +108,12 @@ GO
 ALTER TABLE [dbo].[Team]
 ADD CONSTRAINT [PK_Team]
     PRIMARY KEY CLUSTERED ([IdTeam] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'Addiction'
+ALTER TABLE [dbo].[Addiction]
+ADD CONSTRAINT [PK_Addiction]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
 -- --------------------------------------------------
@@ -147,6 +163,36 @@ GO
 CREATE INDEX [IX_FK_ProjectProject]
 ON [dbo].[Project]
     ([parrentProject_IdProject]);
+GO
+
+-- Creating foreign key on [lastProject_IdProject] in table 'Addiction'
+ALTER TABLE [dbo].[Addiction]
+ADD CONSTRAINT [FK_ProjectAddiction]
+    FOREIGN KEY ([lastProject_IdProject])
+    REFERENCES [dbo].[Project]
+        ([IdProject])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_ProjectAddiction'
+CREATE INDEX [IX_FK_ProjectAddiction]
+ON [dbo].[Addiction]
+    ([lastProject_IdProject]);
+GO
+
+-- Creating foreign key on [nextProject_IdProject] in table 'Addiction'
+ALTER TABLE [dbo].[Addiction]
+ADD CONSTRAINT [FK_ProjectAddiction1]
+    FOREIGN KEY ([nextProject_IdProject])
+    REFERENCES [dbo].[Project]
+        ([IdProject])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_ProjectAddiction1'
+CREATE INDEX [IX_FK_ProjectAddiction1]
+ON [dbo].[Addiction]
+    ([nextProject_IdProject]);
 GO
 
 -- --------------------------------------------------

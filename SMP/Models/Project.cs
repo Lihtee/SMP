@@ -18,6 +18,7 @@ namespace SMP.Models
         public Project()
         {
             this.isDone = false;
+            this.isClose = false;
         }
     
         public int IdProject { get; set; }
@@ -26,6 +27,9 @@ namespace SMP.Models
         public System.DateTime endDateTime { get; set; }
         public string description { get; set; }
         public bool isDone { get; set; }
+        public bool isClose { get; set; }
+        public Nullable<decimal> plannedBudget { get; set; }
+        public Nullable<decimal> realBudget { get; set; }
     
         public virtual Project parrentProject { get; set; }
     }
