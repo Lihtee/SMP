@@ -55,6 +55,8 @@
     <Property Name="surName" Type="nvarchar(max)" Nullable="true" />
     <Property Name="middleName" Type="nvarchar(max)" Nullable="true" />
     <Property Name="Position" Type="int" Nullable="false" />
+    <Property Name="login" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="password" Type="nvarchar(max)" Nullable="false" />
   </EntityType>
   <EntityType Name="Team">
     <Key>
@@ -188,9 +190,11 @@
           <Property Name="surName" Type="String" Nullable="true" />
           <Property Name="middleName" Type="String" Nullable="true" />
           <Property Name="Position" Type="Model.Position" Nullable="false" />
+          <Property Name="login" Type="String" Nullable="false" />
+          <Property Name="password" Type="String" Nullable="false" />
         </EntityType>
         <EnumType Name="Position">
-          <Member Name="Мэнеджер" Value="0" />
+          <Member Name="Менеджер" Value="0" />
           <Member Name="Исполнитель" Value="1" />
         </EnumType>
         <EntityType Name="Team">
@@ -198,8 +202,6 @@
             <PropertyRef Name="IdTeam" />
           </Key>
           <Property Name="IdTeam" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="idPerson" Type="Int32" Nullable="false" />
-          <Property Name="idProject" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Person" Relationship="Model.PersonTeam" FromRole="Team" ToRole="Person" />
           <NavigationProperty Name="Project" Relationship="Model.ProjectTeam" FromRole="Team" ToRole="Project" />
         </EntityType>
@@ -260,6 +262,8 @@
           <ScalarProperty Name="surName" ColumnName="surName" />
           <ScalarProperty Name="middleName" ColumnName="middleName" />
           <ScalarProperty Name="Position" ColumnName="Position" />
+          <ScalarProperty Name="login" ColumnName="login" />
+          <ScalarProperty Name="password" ColumnName="password" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -267,8 +271,6 @@
       <EntityTypeMapping TypeName="IsTypeOf(Model.Team)">
         <MappingFragment StoreEntitySet="Team">
           <ScalarProperty Name="IdTeam" ColumnName="IdTeam" />
-          <ScalarProperty Name="idPerson" ColumnName="idPerson" />
-          <ScalarProperty Name="idProject" ColumnName="idProject" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

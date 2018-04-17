@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 04/16/2018 20:20:50
+-- Date Created: 04/17/2018 10:12:05
 -- Generated from EDMX file: D:\HSE\3Course\SMP\SMP\Models\Model.edmx
 -- --------------------------------------------------
 
@@ -26,6 +26,12 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_ProjectProject]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Project] DROP CONSTRAINT [FK_ProjectProject];
 GO
+IF OBJECT_ID(N'[dbo].[FK_ProjectAddiction]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Addiction] DROP CONSTRAINT [FK_ProjectAddiction];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ProjectAddiction1]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Addiction] DROP CONSTRAINT [FK_ProjectAddiction1];
+GO
 
 -- --------------------------------------------------
 -- Dropping existing tables
@@ -39,6 +45,9 @@ IF OBJECT_ID(N'[dbo].[Person]', 'U') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[Team]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Team];
+GO
+IF OBJECT_ID(N'[dbo].[Addiction]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Addiction];
 GO
 
 -- --------------------------------------------------
@@ -66,7 +75,9 @@ CREATE TABLE [dbo].[Person] (
     [firstName] nvarchar(max)  NOT NULL,
     [surName] nvarchar(max)  NULL,
     [middleName] nvarchar(max)  NULL,
-    [Position] int  NOT NULL
+    [Position] int  NOT NULL,
+    [login] nvarchar(max)  NOT NULL,
+    [password] nvarchar(max)  NOT NULL
 );
 GO
 

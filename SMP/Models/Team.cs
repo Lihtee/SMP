@@ -15,8 +15,6 @@ namespace SMP.Models
     public partial class Team
     {
         public int IdTeam { get; set; }
-        public int idPerson { get; set; }
-        public int idProject { get; set; }
     
         public virtual Person Person { get; set; }
         public virtual Project Project { get; set; }
