@@ -7,7 +7,7 @@
       <Diagram DiagramId="05df7ec243644a2180e1981505366914" Name="Diagram1" DisplayType="true" >
         <EntityTypeShape EntityType="Model.Project" Width="1.5" PointX="0.75" PointY="0.875" />
         <EntityTypeShape EntityType="Model.Person" Width="1.5" PointX="2.75" PointY="0.875" />
-        <EntityTypeShape EntityType="Model.Team" Width="1.5" PointX="2.75" PointY="3.375" />
+        <EntityTypeShape EntityType="Model.Team" Width="1.5" PointX="2.75" PointY="4.375" />
         <AssociationConnector Association="Model.PersonTeam" />
         <AssociationConnector Association="Model.ProjectTeam" />
         <AssociationConnector Association="Model.ProjectProject" />

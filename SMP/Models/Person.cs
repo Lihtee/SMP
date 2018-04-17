@@ -19,5 +19,7 @@ namespace SMP.Models
         public string surName { get; set; }
         public string middleName { get; set; }
         public Position Position { get; set; }
+        public string login { get; set; }
+        public string password { get; set; }
     }
 }

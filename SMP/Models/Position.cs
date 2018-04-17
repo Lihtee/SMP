@@ -13,7 +13,7 @@ namespace SMP.Models
     
     public enum Position : int
     {
-        Мэнеджер = 0,
+        Менеджер = 0,
         Исполнитель = 1
     }
 }
