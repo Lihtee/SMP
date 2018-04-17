@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 04/17/2018 10:12:05
+-- Date Created: 04/17/2018 12:48:26
 -- Generated from EDMX file: D:\HSE\3Course\SMP\SMP\Models\Model.edmx
 -- --------------------------------------------------
 
@@ -84,8 +84,6 @@ GO
 -- Creating table 'Team'
 CREATE TABLE [dbo].[Team] (
     [IdTeam] int IDENTITY(1,1) NOT NULL,
-    [idPerson] int  NOT NULL,
-    [idProject] int  NOT NULL,
     [Person_IdPerson] int  NOT NULL,
     [Project_IdProject] int  NOT NULL
 );
