@@ -1,0 +1,17 @@
+﻿@using SMP.Models
+
+@if ((Person)Session["user"] != null)
+{
+    <ul class="nav navbar-nav navbar-right">
+        <li>
+            <a>@("Здравствуйте, " + ((Person)Session["user"]).firstName + " " + ((Person)Session["user"]).surName + "!")</a>
+        </li>
+        <li>@Html.ActionLink("Выход", "Exit", "Home")</li>
+    </ul>
+}
+else
+{
+    <ul class="nav navbar-nav navbar-right">
+        <li>@Html.ActionLink("Выполнить вход", "Login", "Home")</li>
+    </ul>
+}

@@ -69,7 +69,7 @@ namespace SMP.Models.Repositoryes
                 surName = surName,
                 middleName = middleName,
                 login = login,
-                password = password,
+                password = password.GetHashCode().ToString(),
                 Position = (Position)position,
             };
             cont.Person.Add(person);
