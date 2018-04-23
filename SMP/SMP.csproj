@@ -163,6 +163,7 @@
     <Compile Include="Controllers\ControllerFactory.cs" />
     <Compile Include="Controllers\ExecuterController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ManagerController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -194,6 +195,7 @@
     <Compile Include="Models\Project.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Repositoryes\PersonRepository.cs" />
     <Compile Include="Models\Repositoryes\ProjectRepository.cs" />
     <Compile Include="Models\Repositoryes\TeamRepository.cs" />
     <Compile Include="Models\Team.cs">
@@ -260,6 +262,9 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Executer\Index.cshtml" />
     <Content Include="Views\Executer\Work.cshtml" />
+    <Content Include="Views\Manager\Projects.cshtml" />
+    <Content Include="Views\Home\Login.cshtml" />
+    <Content Include="Views\Shared\_LoginPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
