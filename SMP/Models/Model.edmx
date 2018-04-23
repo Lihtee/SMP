@@ -63,8 +63,6 @@
       <PropertyRef Name="IdTeam" />
     </Key>
     <Property Name="IdTeam" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="idPerson" Type="int" Nullable="false" />
-    <Property Name="idProject" Type="int" Nullable="false" />
     <Property Name="Person_IdPerson" Type="int" Nullable="false" />
     <Property Name="Project_IdProject" Type="int" Nullable="false" />
   </EntityType>

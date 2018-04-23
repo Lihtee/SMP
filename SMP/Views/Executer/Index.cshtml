@@ -1,0 +1,33 @@
+﻿@using SMP 
+@model SMP.Views.VievModels.ExecutorIndexViewModel
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>@Model.PersonNameString </h2>
+@{
+    int nrows = Model.Projects.Count;
+    int ncols = 3;
+        }
+<table title="Список работ">
+        @for (int i = 0; i <nrows; i++)
+        {
+            <tr>
+                <td>
+                     @Model.Projects[i].projectName
+                </td>
+                <td>
+                    @(
+                        Model.Projects[i].startDateTime.ToShortDateString() + 
+                        Model.Projects[i].endDateTime.ToShortDateString()
+                    )
+                </td>
+                <td>
+                    @Model.InnerProjects[i].projectName
+                </td>
+            </tr>
+        }
+        
+</table>
+
