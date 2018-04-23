@@ -12,7 +12,58 @@
     <title>Projects</title>
 </head>
 <body>
-    <div>
+    @if (((Person)Session["user"]) != null)
+    {
+        if (((Person)Session["user"]).Position == Position.Менеджер)
+        {
+    <div class="panel panel-default">
+        <p>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <h2>Менеджер - стартовая</h2>
+                </div>
+            </div>
+        </p>
+        <p>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12"></div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <input id="Button1" type="button" value="Просмотр моих закрытых проектов" />
+                    @*@Html.ActionLink("Добавить компанию", "AddCompany", "Companyes", htmlAttributes: new { @class = "btn btn-default" })*@
+                </div>
+            </div>
+        </p>
+        <p>
+            <table class="table table-bordered">
+                <tr>
+                    <th>№</th>
+                    <th>Название</th>
+                    <th>Удалить</th>
+                </tr>
+
+                @{
+                    IEnumerable<KeyValuePair<int, Project>> projects = ((IEnumerable<KeyValuePair<int, Project>>)ViewData["projects"]);
+                    for (int j = 0; j < projects.Count(); j++)
+                    {
+                <tr>
+                    <td>@(j + 1)</td>
+                    <th>@Html.ActionLink("Проект " + projects.ElementAt(j).Value.projectName, "Project", "Manager", routeValues: new { idProject = projects.ElementAt(j).Value.IdProject }, htmlAttributes: new { @class = "btn" })</th>
+                    <th>@Html.ActionLink(" ", "DeleteProject", "Manager", routeValues: new { id = projects.ElementAt(j).Value.IdProject }, htmlAttributes: new { @class = "btn glyphicon glyphicon-remove" })</th>
+                </tr>
+                        }
+                    }
+            </table>
+        </p>
     </div>
+        }
+        if (((Person)Session["user"]).Position == Position.Исполнитель)
+        {
+            <h3>Вы вошли, как исполнитель, а нодо войти, как менеджер</h3>
+        }
+    }
+    else
+    {
+        <h3>Вход не выполнен, Вам надо выполнить вход</h3>
+    }
 </body>
 </html>
