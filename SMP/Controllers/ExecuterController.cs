@@ -1,4 +1,5 @@
-﻿using SMP.Models.Repositoryes;
+﻿using SMP.Models;
+using SMP.Models.Repositoryes;
 using SMP.ViewModels;
 using SMP.Views.VievModels;
 using System;
@@ -12,7 +13,11 @@ namespace SMP.Controllers
 {
     public class ExecuterController : Controller
     {
-        
+        DataManager _DataManager;
+        public ExecuterController (DataManager _DM)
+        {
+            _DataManager = _DM;
+        }
         // GET: Executer
         public ActionResult Index(string idPerson)
         {
@@ -34,7 +39,6 @@ namespace SMP.Controllers
                     {
                         var vm = new ProjectRepository(new Models.ModelContainer());
                         vm.DoneProject(Convert.ToInt32(idWork));
-
                     }
                     break;
                 case "back": break;

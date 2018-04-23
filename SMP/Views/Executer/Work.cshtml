@@ -5,15 +5,14 @@
 }
 
 <h2>@Model.Person.login</h2>
-<input type="button" /> 
-@using(Html.BeginForm ("FinishWork", "Executor", FormMethod.Post))
+@using(Html.BeginForm ("FinishWork", "Executer", FormMethod.Post))
 {
     //Дальнейшая передача персоны и работы
     <input type="hidden" name="idPerson" value="@Model.Person.IdPerson" />
     <input type="hidden" name="idWork" value="@Model.Project.IdProject" />
 
     <button name="action" value="back"> К списку работ</button>
-    <p>Описание работы</p>
+    <p>@Model.Project.description</p>
     <button name="action" value="finish">Завершить работу</button>
 }
 
