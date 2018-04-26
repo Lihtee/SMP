@@ -1,0 +1,75 @@
+﻿@using SMP.Models
+
+@{
+    ViewBag.Title = "AddProjectSecondStep";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>AddProjectSecondStep</title>
+</head>
+<body>
+    @if (((Person)Session["user"]) != null)
+    {
+        if (((Person)Session["user"]).Position == Position.Менеджер)
+        {
+            <div class="panel panel-default">
+                <p class="row">
+                    <h3>@Html.ActionLink("Менеджер - стартовая", "Projects", "Manager") > Создание проекта - шаг 2 </h3>
+                </p>
+
+                <h4 class="right">Команда</h4>
+                <p>
+                    <ul class="list-group">
+                        @{
+                            IEnumerable<Team> teams = ((IEnumerable<Team>)ViewData["teams"]);
+                            foreach (Team t in teams)
+                            {
+                                <li class="list-group-item">
+                                    <span>@Html.ActionLink(" ", "DeleteTeamSecondStep", "Manager", routeValues: new { teamId = t.IdTeam, projectId = Model.IdProject }, htmlAttributes: new { @class = "btn glyphicon glyphicon-remove" })</span>
+                                    @(t.Person.firstName + ' ' + t.Person.surName)
+                                </li>
+                            }
+                        }
+                    </ul>
+                </p>
+
+                <hr />
+
+                <h4 class="right">В запасе</h4>
+                <p>
+                    <ul class="list-group">
+                        @{
+                            IEnumerable<Person> persons = ((IEnumerable<Person>)ViewData["persons"]);
+                            foreach (Person p in persons)
+                            {
+                                <li class="list-group-item">
+                                    <span @*class="badge"*@>@Html.ActionLink(" ", "AddTeamSecondStep", "Manager", routeValues: new { personId = p.IdPerson, projectId = Model.IdProject }, htmlAttributes: new { @class = "btn glyphicon glyphicon-plus" })</span>
+                                    @(p.firstName + ' ' + p.surName)
+                                </li>
+                            }
+                        }
+                    </ul>
+                </p>
+
+                <p class="row col-lg-6 col-md-6 col-sm-12">
+                    <div class="btn btn-default">
+                        @Html.ActionLink("Завершить", "Projects", "Manager")
+                    </div>
+                </p>
+            </div>
+        }
+        if (((Person)Session["user"]).Position == Position.Исполнитель)
+        {
+            <h3>Вы вошли, как исполнитель, а нодо войти, как менеджер</h3>
+        }
+    }
+    else
+    {
+        <h3>Вход не выполнен, Вам надо выполнить вход</h3>
+    }
+</body>
+</html>

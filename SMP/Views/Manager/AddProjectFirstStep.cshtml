@@ -1,0 +1,76 @@
+﻿@using SMP.Models
+
+@{
+    ViewBag.Title = "AddProjectFirstStep";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>AddProjectFirstStep</title>
+</head>
+<body>
+    @if (((Person)Session["user"]) != null)
+    {
+        if (((Person)Session["user"]).Position == Position.Менеджер)
+        {
+            <div class="panel panel-default">
+                <p class="row">
+                    <h3>@Html.ActionLink("Менеджер - стартовая", "Projects", "Manager") > Создание проекта - шаг 1 </h3>
+                </p>
+                @using (Html.BeginForm())
+                {
+                    @*@Html.Hidden("projectId", ((Person)Session["user"]).IdPerson.ToString())*@
+
+                    <div class="row col-lg-12 col-md-12 col-sm-12">
+                        <p class="input-group">
+                            <span class="input-group-addon" id="Firm">Название:</span>
+                            <input type="text" class="form-control" name="projectName" placeholder="Название">
+                            @*@Html.TextBox()*@
+                            @Html.ValidationMessage("ProjectName")
+                        </p>
+                        <p class="input-group">
+                            <span class="input-group-addon" id="Firm">Длительность</span>
+                            <span class="input-group-addon" id="Firm">С:</span>
+                            <input type="date" class="form-control" name="projectStart" placeholder="Начало">
+                            <input type="hidden" name="parName" value="val" />
+                            <span class="input-group-addon" id="Firm">По:</span>
+                            <input type="date" class="form-control" name="projectEnd" placeholder="Конец">
+                            @Html.ValidationMessage("ProjectLength")
+                        </p>
+                        <p class="input-group">
+                            <span class="input-group-addon" id="Firm">Описание</span>
+                            <textarea id="TextArea1" rows="10" cols="60" class="form-control" name="projectDescription"></textarea>
+                        </p>
+                    </div>
+
+                    <p class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <input class="btn btn-default" type="submit" value="Сохранить изменения" name="submit">
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <input class="btn btn-default" type="submit" value="К шагу 2" name="submit">
+                        </div>
+                    </p>
+
+                    <p class="row col-lg-6 col-md-6 col-sm-12">
+                        <div class="btn btn-default">
+                            @Html.ActionLink("Отмена", "Projects", "Manager")
+                        </div>
+                    </p>
+                }
+            </div>
+        }
+        if (((Person)Session["user"]).Position == Position.Исполнитель)
+        {
+            <h3>Вы вошли, как исполнитель, а нодо войти, как менеджер</h3>
+        }
+    }
+    else
+    {
+        <h3>Вход не выполнен, Вам надо выполнить вход</h3>
+    }
+</body>
+</html>

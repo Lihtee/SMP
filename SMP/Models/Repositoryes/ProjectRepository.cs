@@ -38,7 +38,7 @@ namespace SMP.Models.Repositoryes
         /// </summary>
         /// <param name="parrentId">Id родительского проекта</param>
         /// <returns>Список проектов</returns>
-        public List<Project> GetProjectByParrentId(int parrentId)
+        public List<Project> GetProjectsByParrentId(int parrentId)
         {
             return cont.Project.ToList().FindAll(p => p.parrentProject.IdProject == parrentId).ToList();
         }
@@ -48,7 +48,7 @@ namespace SMP.Models.Repositoryes
         /// </summary>
         /// <param name="personId">Id исполнителя</param>
         /// <returns>Список проектов</returns>
-        public List<Project> GetProjectByPersonId(int personId)
+        public List<Project> GetProjectsByPersonId(int personId)
         {
             return (from team in cont.Team
                     where team.Person.IdPerson == personId
@@ -62,7 +62,21 @@ namespace SMP.Models.Repositoryes
         /// <param name="id"></param>
         public void DeleteProject(int id)
         {
+            if (cont.Project.Single(p => p.IdProject == id).parrentProject != null)
+            {
+                foreach(var p in GetProjectsByParrentId(id))
+                {
+                    DeleteProject(p.IdProject);
+                }
+            }
+
+            foreach(var t in cont.Team.ToList())
+            {
+                cont.Team.Remove(t);
+            }
+
             cont.Project.Remove(cont.Project.Find(id));
+
             cont.SaveChanges();
         }
 
@@ -91,6 +105,35 @@ namespace SMP.Models.Repositoryes
                 plannedBudget = plannnedBudget,
                 realBudget = null,
                 parrentProject = GetProjectById(parrentId),
+            };
+            cont.Project.Add(p);
+            cont.SaveChanges();
+            return p;
+        }
+
+        /// <summary>
+        /// Добавляет проект в базу
+        /// </summary>
+        /// <param name="projectName">Название проекта</param>
+        /// <param name="description">Описание проекта (может отсутствовать)</param>
+        /// <param name="start">Время начала проекта</param>
+        /// <param name="end">Время окончания проекта</param>
+        /// <param name="plannnedBudget">Плановый бюджет</param>
+        /// <returns>Возвращает добавленный проект</returns>
+        public Project AddProject(string projectName, string description,
+            DateTime start, DateTime end, decimal plannnedBudget)
+        {
+
+            Project p = new Project
+            {
+                projectName = projectName,
+                description = description,
+                startDateTime = start,
+                endDateTime = end,
+
+                plannedBudget = plannnedBudget,
+                realBudget = null,
+                parrentProject = null,
             };
             cont.Project.Add(p);
             cont.SaveChanges();
