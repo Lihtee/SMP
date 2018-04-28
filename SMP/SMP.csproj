@@ -261,6 +261,9 @@
     <Content Include="Views\Manager\Project.cshtml" />
     <Content Include="Views\Manager\AddProjectFirstStep.cshtml" />
     <Content Include="Views\Manager\AddProjectSecondStep.cshtml" />
+    <Content Include="Views\Manager\Work.cshtml" />
+    <Content Include="Views\Manager\AccesError.cshtml" />
+    <Content Include="Views\Manager\AddWork.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

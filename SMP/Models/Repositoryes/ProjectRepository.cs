@@ -62,7 +62,7 @@ namespace SMP.Models.Repositoryes
         /// <param name="id"></param>
         public void DeleteProject(int id)
         {
-            if (cont.Project.Single(p => p.IdProject == id).parrentProject != null)
+            if (cont.Project.Single(p => p.IdProject == id).parrentProject == null)
             {
                 foreach(var p in GetProjectsByParrentId(id))
                 {
@@ -70,9 +70,10 @@ namespace SMP.Models.Repositoryes
                 }
             }
 
-            foreach(var t in cont.Team.ToList())
+            foreach(var t in cont.Team.Where(team => team.Project.IdProject == id).ToList())
             {
-                cont.Team.Remove(t);
+                if (t.Project.IdProject == id)
+                    cont.Team.Remove(t);
             }
 
             cont.Project.Remove(cont.Project.Find(id));
@@ -152,8 +153,7 @@ namespace SMP.Models.Repositoryes
         /// <param name="parrentId">Id родительского проекта</param>
         /// <returns>Возвращает изменённый проект</returns>
         public Project EditProject(int id, string projectName, string description,
-            DateTime start, DateTime end, decimal plannnedBudget,
-            int parrentId)
+            DateTime start, DateTime end, decimal plannnedBudget)
         {
             Project p = GetProjectById(id);
 
@@ -164,7 +164,6 @@ namespace SMP.Models.Repositoryes
 
             p.plannedBudget = plannnedBudget;
             p.realBudget = null;
-            p.parrentProject = GetProjectById(parrentId);
             
             cont.SaveChanges();
             return p;

@@ -12,10 +12,6 @@
     <title>Projects</title>
 </head>
 <body>
-    @if (((Person)Session["user"]) != null)
-    {
-        if (((Person)Session["user"]).Position == Position.Менеджер)
-        {
     <div class="panel panel-default">
         <p class="row">
             <div class="col-lg-6 col-md-6 col-sm-12">
@@ -37,7 +33,6 @@
         <p>
             <table class="table table-bordered">
                 <tr>
-                    <th>№</th>
                     <th>Название</th>
                     <th>Удалить</th>
                 </tr>
@@ -47,7 +42,6 @@
                 for (int j = 0; j < projects.Count(); j++)
                 {
                     <tr>
-                        <td>@(j + 1)</td>
                         <th>@Html.ActionLink("Проект " + projects.ElementAt(j).projectName, "Project", "Manager", routeValues: new { idProject = projects.ElementAt(j).IdProject }, htmlAttributes: new { @class = "btn" })</th>
                         <th>@Html.ActionLink(" ", "DeleteProject", "Manager", routeValues: new { idProject = projects.ElementAt(j).IdProject }, htmlAttributes: new { @class = "btn glyphicon glyphicon-remove" })</th>
                     </tr>
@@ -56,15 +50,5 @@
             </table>
         </p>
     </div>
-        }
-        if (((Person)Session["user"]).Position == Position.Исполнитель)
-        {
-            <h3>Вы вошли, как исполнитель, а нодо войти, как менеджер</h3>
-        }
-    }
-    else
-    {
-        <h3>Вход не выполнен, Вам надо выполнить вход</h3>
-    }
 </body>
 </html>
