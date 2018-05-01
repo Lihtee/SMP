@@ -29,7 +29,7 @@ namespace SMP.Views.VievModels
             if (person == null)
                 throw new Exception("Персоны с таким id нет в базе");
             else
-                works = project_rep.GetProjectByPersonId(person.IdPerson).Where(x=> !x.isClose && !x.isDone).ToList();
+                works = project_rep.GetProjectsByPersonId(person.IdPerson).Where(x=> !x.isClose && !x.isDone).ToList();
         }
 
         

@@ -8,7 +8,6 @@
 @using(Html.BeginForm ("FinishWork", "Executer", FormMethod.Post))
 {
     //Дальнейшая передача персоны и работы
-    <input type="hidden" name="idPerson" value="@Model.Person.IdPerson" />
     <input type="hidden" name="idWork" value="@Model.Project.IdProject" />
 
     <button name="action" value="back"> К списку работ</button>

@@ -68,7 +68,7 @@ namespace SMP.Controllers
                 if (person.Position == Position.Менеджер)
                     return RedirectToAction(actionName: "Projects", controllerName: "Manager");
                 if (person.Position == Position.Исполнитель)
-                    return RedirectToAction(actionName: "Projects", controllerName: "Manager");
+                    return RedirectToAction(actionName: "Index", controllerName: "Executer");
             }
 
             return View();
