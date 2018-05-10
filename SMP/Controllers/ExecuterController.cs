@@ -19,19 +19,19 @@ namespace SMP.Controllers
             _DataManager = _DM;
         }
         // GET: Executer
-        public ActionResult Index(string idPerson)
+        public ActionResult Index()
         {
-            var vm = new ExecutorIndexViewModel(Convert.ToInt32(idPerson));
+            var vm = new ExecutorIndexViewModel(((Person)Session["user"]).IdPerson);
             return View(vm);
         }
         
-        public ActionResult Work(string idWork, string idPerson)
+        public ActionResult Work(string idWork)
         {
-            var vm = new ExecutorWorkViewModel(Convert.ToInt32(idWork), Convert.ToInt32(idPerson));
+            var vm = new ExecutorWorkViewModel(Convert.ToInt32(idWork), ((Person)Session["user"]).IdPerson);
             return View(vm);
         }
         [HttpPost]
-        public ActionResult FinishWork (string idWork, string idPerson, string action)
+        public ActionResult FinishWork (string idWork, string action)
         {
             switch (action)
             {
@@ -44,7 +44,7 @@ namespace SMP.Controllers
                 case "back": break;
             }
             
-            return RedirectToAction("Index", new { idPerson = idPerson });
+            return RedirectToAction("Index");
         }
     }
 }

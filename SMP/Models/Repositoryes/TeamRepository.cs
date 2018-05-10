@@ -65,6 +65,28 @@ namespace SMP.Models.Repositoryes
         }
 
         /// <summary>
+        /// Возвращает команду проекта/работы
+        /// </summary>
+        /// <param name="projectId">Id проекта</param>
+        /// <returns>Список команд</returns>
+        public List<Team> GetTeamsByParrentProject(int projectId)
+        {
+            return (from t in cont.Team
+                    where t.Project.parrentProject.IdProject == projectId
+                    select t).ToList();
+        }
+
+        /// <summary>
+        /// Команду работы
+        /// </summary>
+        /// <param name="projectId">Id проекта</param>
+        /// <returns>Команда</returns>
+        public Team GetTeamByWork(int projectId)
+        {
+            return cont.Team.ToList().SingleOrDefault(t => t.Project.IdProject == projectId);
+        }
+
+        /// <summary>
         /// Добавляет команду в базу
         /// </summary>
         /// <param name="personId">Id исполнителя</param>

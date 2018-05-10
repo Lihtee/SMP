@@ -257,14 +257,18 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Executer\Index.cshtml" />
     <Content Include="Views\Executer\Work.cshtml" />
     <Content Include="Views\Manager\Projects.cshtml" />
     <Content Include="Views\Home\Login.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Manager\Project.cshtml" />
+    <Content Include="Views\Manager\AddProjectFirstStep.cshtml" />
+    <Content Include="Views\Manager\AddProjectSecondStep.cshtml" />
+    <Content Include="Views\Manager\Work.cshtml" />
+    <Content Include="Views\Manager\AccesError.cshtml" />
+    <Content Include="Views\Manager\AddWork.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

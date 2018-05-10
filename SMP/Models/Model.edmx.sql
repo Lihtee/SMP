@@ -2,8 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 04/23/2018 19:28:51
--- Generated from EDMX file: C:\Users\Дрей\source\repos\SMP\SMP\Models\Model.edmx
+-- Date Created: 04/18/2018 14:39:27
+-- Generated from EDMX file: D:\HSE\3Course\SMP\SMP\Models\Model.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -65,7 +65,7 @@ CREATE TABLE [dbo].[Project] (
     [isClose] bit  NOT NULL,
     [plannedBudget] decimal(18,0)  NULL,
     [realBudget] decimal(18,0)  NULL,
-    [parrentProject_IdProject] int  NOT NULL
+    [parrentProject_IdProject] int  NULL
 );
 GO
 

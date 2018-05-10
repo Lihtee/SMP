@@ -21,20 +21,6 @@ namespace SMP.Controllers
             return View();
         }
 
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
-        }
-
         #region Login window
         /// <summary>
         /// Открывает окно входа
@@ -79,7 +65,10 @@ namespace SMP.Controllers
             if (ModelState.IsValid)
             {
                 Session["user"] = person;
-                return RedirectToAction("Login");
+                if (person.Position == Position.Менеджер)
+                    return RedirectToAction(actionName: "Projects", controllerName: "Manager");
+                if (person.Position == Position.Исполнитель)
+                    return RedirectToAction(actionName: "Index", controllerName: "Executer");
             }
 
             return View();

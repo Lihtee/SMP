@@ -44,7 +44,7 @@
     <Property Name="isClose" Type="bit" Nullable="false" DefaultValue="false" />
     <Property Name="plannedBudget" Type="decimal" Nullable="true" />
     <Property Name="realBudget" Type="decimal" Nullable="true" />
-    <Property Name="parrentProject_IdProject" Type="int" Nullable="false" />
+    <Property Name="parrentProject_IdProject" Type="int" Nullable="true" />
   </EntityType>
   <EntityType Name="Person">
     <Key>
@@ -99,7 +99,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="ProjectProject">
-    <End Role="Project" Type="Model.Store.Project" Multiplicity="1" />
+    <End Role="Project" Type="Model.Store.Project" Multiplicity="0..1" />
     <End Role="Project1" Type="Model.Store.Project" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Project">
@@ -212,7 +212,7 @@
           <End Type="Model.Team" Role="Team" Multiplicity="*" />
         </Association>
         <Association Name="ProjectProject">
-          <End Type="Model.Project" Role="Project" Multiplicity="1" />
+          <End Type="Model.Project" Role="Project" Multiplicity="0..1" />
           <End Type="Model.Project" Role="Project1" Multiplicity="*" />
         </Association>
         <EntityType Name="Addiction">
@@ -302,6 +302,7 @@
       <EndProperty Name="Project1">
         <ScalarProperty Name="IdProject" ColumnName="IdProject" />
       </EndProperty>
+      <Condition ColumnName="parrentProject_IdProject" IsNull="false" />
     </AssociationSetMapping>
     <AssociationSetMapping Name="ProjectAddiction" TypeName="Model.ProjectAddiction" StoreEntitySet="Addiction">
       <EndProperty Name="Project">
