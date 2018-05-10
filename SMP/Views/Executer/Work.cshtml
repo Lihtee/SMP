@@ -3,6 +3,16 @@
 @{
     ViewBag.Title = "Work";
 }
+<link rel="stylesheet" href="~/Content/bootstrap.css">
+<style> 
+    .container {overflow: hidden; padding: 0px 0px 0px 0px;}
+    .box {}
+    .descr {width: 50%; margin-left:2px}
+    .box div {
+        white-space: pre-wrap;
+        float:left;
+    }
+</style>
 
 <h2>@Model.Person.login</h2>
 @using(Html.BeginForm ("FinishWork", "Executer", FormMethod.Post))
@@ -10,9 +20,15 @@
     //Дальнейшая передача персоны и работы
     <input type="hidden" name="idPerson" value="@Model.Person.IdPerson" />
     <input type="hidden" name="idWork" value="@Model.Project.IdProject" />
-
     <button name="action" value="back"> К списку работ</button>
-    <p>@Model.Project.description</p>
+    <h3>@Model.Project.projectName</h3>
+    <p>Длительность: с @Model.Project.startDateTime.Date.ToShortDateString() по @Model.Project.endDateTime.Date.ToShortDateString()</p>
+    <div class="container">
+        <div class="box">
+            <div> Описание:</div>
+            <div class="descr">@Model.Project.description</div>
+        </div>
+    </div>
     <button name="action" value="finish">Завершить работу</button>
 }
 
