@@ -40,7 +40,7 @@ namespace SMP.Models.Repositoryes
         /// <returns>Список проектов</returns>
         public List<Project> GetProjectsByParrentId(int parrentId)
         {
-            return cont.Project.ToList().FindAll(p => p.parrentProject.IdProject == parrentId).ToList();
+            return cont.Project.Where(p => p.parrentProject.IdProject == parrentId).ToList();
         }
 
         /// <summary>
