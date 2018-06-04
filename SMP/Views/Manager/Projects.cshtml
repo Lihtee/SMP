@@ -1,0 +1,54 @@
+﻿@using SMP.Models
+
+@{
+    ViewBag.Title = "Projects";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Projects</title>
+</head>
+<body>
+    <div class="panel panel-default">
+        <p class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <h2>Менеджер - стартовая</h2>
+            </div>
+
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <h1> </h1>
+                <input id="Button1" type="button" value="Просмотр моих закрытых проектов" />
+                @*@Html.ActionLink("Добавить проект", "AddProjectFirstStep", "Manager", htmlAttributes: new { @class = "btn btn-default glyphicon glyphicon-plus" })*@
+            </div>
+        </p>
+        <p class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <h4>@Html.ActionLink("Добавить проект", "AddProjectFirstStep", "Manager", htmlAttributes: new { @class = "btn btn-default glyphicon glyphicon-plus" })</h4>
+            </div>
+        </p>
+
+        <p>
+            <table class="table table-bordered">
+                <tr>
+                    <th>Название</th>
+                    <th>Удалить</th>
+                </tr>
+
+                @{
+                IEnumerable<Project> projects = ((IEnumerable<Project>)ViewData["projects"]);
+                for (int j = 0; j < projects.Count(); j++)
+                {
+                    <tr>
+                        <th>@Html.ActionLink("Проект " + projects.ElementAt(j).projectName, "Project", "Manager", routeValues: new { idProject = projects.ElementAt(j).IdProject }, htmlAttributes: new { @class = "btn" })</th>
+                        <th>@Html.ActionLink(" ", "DeleteProject", "Manager", routeValues: new { idProject = projects.ElementAt(j).IdProject }, htmlAttributes: new { @class = "btn glyphicon glyphicon-remove" })</th>
+                    </tr>
+            }
+                }
+            </table>
+        </p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+﻿@using SMP 
+@model SMP.Views.VievModels.ExecutorIndexViewModel
+
+<style type="text/css">
+    TABLE {
+        border-collapse: collapse; 
+    }
+
+    TD, TH {
+        padding: 3px; 
+        border: 1px solid black; 
+    }
+</style>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>@Model.PersonNameString </h2>
+<p>Мои работы:</p>
+@{
+    int nrows = Model.Projects.Count;
+    int ncols = 3;
+        }
+<table title="Список работ" >
+        @for (int i = 0; i <nrows; i++)
+        {
+            <tr>
+                <td>
+                     @Html.ActionLink(Model.Projects[i].projectName, "Work", 
+                                        new { idWork = Model.Projects[i].IdProject})
+                </td>
+                <td>
+                    @(
+                        Model.Projects[i].startDateTime.ToShortDateString() + " - " +
+                        Model.Projects[i].endDateTime.ToShortDateString()
+                    )
+                </td>
+                <td>
+                    @Model.InnerProjects[i].projectName
+                </td>
+            </tr>
+        }
+        
+</table>
+

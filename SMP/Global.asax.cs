@@ -33,31 +33,15 @@ namespace SMP
         {
             ModelContainer cont = new ModelContainer();
 
+            PersonRepository personRepository = new PersonRepository(cont);
+            
             if (cont.Person == null || cont.Person.Count() == 0)
             {
-                Person person = new Person
-                {
-                    firstName = "Менеджер",
-                    surName = "Менеджер",
-                    middleName = "Менеджер",
-                    Position = Position.Менеджер,
-                    login = "Manager",
-                    password = "Manager"
-                };
-                cont.Person.Add(person);
-                cont.SaveChanges();
+                personRepository.AddPerson("Менеджер", "Менеджер", "Менеджер",
+                "Manager", "Manager", (int)Position.Менеджер);
 
-                person = new Person
-                {
-                    firstName = "Исполнитель",
-                    surName = "Исполнитель",
-                    middleName = "Исполнитель",
-                    Position = Position.Исполнитель,
-                    login = "User",
-                    password = "User"
-                };
-                cont.Person.Add(person);
-                cont.SaveChanges();
+                personRepository.AddPerson("Исполнитель", "Исполнитель", "Исполнитель",
+                    "User", "User", (int)Position.Исполнитель);
             }
         }
     }

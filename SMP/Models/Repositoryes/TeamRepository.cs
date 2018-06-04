@@ -20,7 +20,17 @@ namespace SMP.Models.Repositoryes
         /// <returns>Список команд</returns>
         public List<Team> GetTeams()
         {
-            return cont.Team.OrderBy(p => p.IdTeam).ToList();
+            return cont.Team.OrderBy(t => t.IdTeam).ToList();
+        }
+
+        /// <summary>
+        /// Возвращает команду по Id
+        /// </summary>
+        /// <param name="teamId">Id команды</param>
+        /// <returns></returns>
+        public Team GetTeamById(int teamId)
+        {
+            return cont.Team.ToList().Find(t => t.IdTeam == teamId);
         }
 
         /// <summary>
@@ -55,6 +65,28 @@ namespace SMP.Models.Repositoryes
         }
 
         /// <summary>
+        /// Возвращает команду проекта/работы
+        /// </summary>
+        /// <param name="projectId">Id проекта</param>
+        /// <returns>Список команд</returns>
+        public List<Team> GetTeamsByParrentProject(int projectId)
+        {
+            return (from t in cont.Team
+                    where t.Project.parrentProject.IdProject == projectId
+                    select t).ToList();
+        }
+
+        /// <summary>
+        /// Команду работы
+        /// </summary>
+        /// <param name="projectId">Id проекта</param>
+        /// <returns>Команда</returns>
+        public Team GetTeamByWork(int projectId)
+        {
+            return cont.Team.ToList().SingleOrDefault(t => t.Project.IdProject == projectId);
+        }
+
+        /// <summary>
         /// Добавляет команду в базу
         /// </summary>
         /// <param name="personId">Id исполнителя</param>
@@ -68,7 +100,18 @@ namespace SMP.Models.Repositoryes
                 Project = cont.Project.FirstOrDefault(p => p.IdProject == projectId),
             };
             cont.Team.Add(t);
+            cont.SaveChanges();
             return t;
+        }
+
+        /// <summary>
+        /// Удаляет команду из базы
+        /// </summary>
+        /// <param name="teamId">Id команды</param>
+        public void DeleteTeam(int teamId)
+        {
+            cont.Team.Remove(GetTeamById(teamId));
+            cont.SaveChanges();
         }
     }
 }

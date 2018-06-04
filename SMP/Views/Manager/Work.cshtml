@@ -1,0 +1,60 @@
+﻿@using SMP.Models
+@model SMP.Models.Project
+
+@{
+    ViewBag.Title = "Work";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Work</title>
+</head>
+<body>
+    <div class="panel panel-default">
+        <p class="row">
+            <h3>@Html.ActionLink("Менеджер - стартовая", "Projects", "Manager") > @Html.ActionLink("Проект: " + Model.parrentProject.projectName, "Project", "Manager", routeValues: new { idProject = Model.parrentProject.IdProject }, htmlAttributes: new { }) > Работа: @Model.projectName</h3>
+        </p>
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.Hidden("projectId", ((Person)Session["user"]).IdPerson.ToString())
+
+            <p class="input-group">
+                <span class="input-group-addon" id="Firm">Название:</span>
+                <input type="text" class="form-control" name="projectName" placeholder="Название" value=@Model.projectName>
+                @Html.ValidationMessage("ProjectName")
+            </p>
+
+            <p class="input-group">
+                <span class="input-group-addon" id="Firm">Длительность</span>
+                <span class="input-group-addon" id="Firm">С:</span>
+                <input type="datetime" class="form-control" name="projectStart" placeholder="Начало" value=@Model.startDateTime.ToShortDateString()>
+                <span class="input-group-addon" id="Firm">По:</span>
+                <input type="datetime" class="form-control" name="projectEnd" placeholder="Конец" value=@Model.endDateTime.ToShortDateString()>
+                @Html.ValidationMessage("ProjectLength")
+            </p>
+
+            <p class="input-group">
+                <span class="input-group-addon" id="Firm">Описание</span>
+                <textarea id="TextArea1" rows="10" cols="60" class="form-control" name="projectDescription">@Model.description</textarea>
+            </p>
+
+            <h4 class="right">Исполнитель</h4>
+
+            <div class="input-group">
+
+                @Html.DropDownList("team", (IEnumerable<SelectListItem>)ViewData["Team"], htmlAttributes: new { @class = "form-control" })
+            </div>
+
+            <p>
+                @Html.ActionLink("Назад", "Project", "Manager", routeValues: new { idProject = Model.parrentProject.IdProject }, htmlAttributes: new { @class = "btn btn-default" })
+                <input class="btn btn-default" type="submit" value="Сохранить">
+            </p>
+        }
+</body>
+</html>
