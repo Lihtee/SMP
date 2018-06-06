@@ -43,15 +43,26 @@ namespace SMP.Controllers
         public ActionResult Projects()
         {
             if (!AccessControll()) return RedirectToAction("AccesError");
-            List<Project> projects = new List<Project>();
+            //List<Project> projects = new List<Project>();
 
-            foreach (var t in _DataManager.teamRepository.GetTeamsByPerson(((Person)Session["user"]).IdPerson))
-            {
-                if (t.Project.parrentProject == null)
-                    projects.Add(t.Project);
-            }
+            //projects.AddRange(
+            //    _DataManager.teamRepository.GetTeamsByPerson(((Person)Session["user"]).IdPerson)
+            //    .Where(team => team.Project.parrentProject == null)
+            //    .Select(team => team.Project)
+            //    .OrderBy(p => p.endDateTime));
 
-            ViewData["projects"] = projects;
+            //foreach (var t in _DataManager.teamRepository.GetTeamsByPerson(((Person)Session["user"]).IdPerson).Where(team => team.Project.parrentProject == null))
+            //{
+            //    if (t.Project.parrentProject == null)
+            //        projects.Add(t.Project);
+            //}
+
+            //ViewData["projects"] = projects;
+            ViewData["projects"] = 
+                _DataManager.teamRepository.GetTeamsByPerson(((Person)Session["user"]).IdPerson)
+                .Where(team => team.Project.parrentProject == null)
+                .Select(team => team.Project)
+                .OrderBy(p => p.endDateTime);
 
             return View();
         }
@@ -111,19 +122,23 @@ namespace SMP.Controllers
 
             if (start > end)
             {
-                ModelState.AddModelError("ProjectStart", "Дата начала должна быть до даты окончания");
-                ModelState.AddModelError("ProjectEnd", "Дата окончания должна быть после даты начала");
+                ModelState.AddModelError("ProjectLength", "Дата начала должна быть до даты окончания");
             }
+
+            int id = Convert.ToInt32(projectId);
 
             if (ModelState.IsValid)
             {
-                int id = Convert.ToInt32(projectId);
                 _DataManager.projectRepository.EditProject(id, projectName, projectDescription, start, end, 0);
                 GetProject(id);
                 GetPersons(id);
                 GetWorks(id);
                 return RedirectToAction("Project", new { idProject = id });
             }
+
+            GetProject(id);
+            GetPersons(id);
+            GetWorks(id);
 
             return View();
         }
@@ -269,8 +284,8 @@ namespace SMP.Controllers
 
         private void GetWorks(int idProject)
         {
-            List<Team> works = _DataManager.teamRepository.GetTeamsByParrentProject(idProject);
-            ViewData["works"] = works;
+            ViewData["works"] = _DataManager.teamRepository.GetTeamsByParrentProject(idProject)
+                .OrderBy(w => w.Project.endDateTime);
         }
         #endregion
 
@@ -327,8 +342,7 @@ namespace SMP.Controllers
 
             if (start > end)
             {
-                ModelState.AddModelError("ProjectStart", "Дата начала должна быть до даты окончания");
-                ModelState.AddModelError("ProjectEnd", "Дата окончания должна быть после даты начала");
+                ModelState.AddModelError("ProjectLength", "Дата начала должна быть до даты окончания");
             }
 
             if (ModelState.IsValid)
@@ -396,20 +410,26 @@ namespace SMP.Controllers
 
             if (start > end)
             {
-                ModelState.AddModelError("ProjectStart", "Дата начала должна быть до даты окончания");
-                ModelState.AddModelError("ProjectEnd", "Дата окончания должна быть после даты начала");
+                ModelState.AddModelError("ProjectLength", "Дата начала должна быть до даты окончания");
+            }
+
+            int id = Convert.ToInt32(projectId);
+            Project project = _DataManager.projectRepository.GetProjectById(id);
+            if (start < project.startDateTime || start > project.endDateTime ||
+                end < project.startDateTime || end > project.endDateTime)
+            {
+                ModelState.AddModelError("ProjectLength", "Начало или конец работы выходят за пределы проекта");
             }
 
             if (ModelState.IsValid)
             {
-                int id = Convert.ToInt32(projectId);
                 var p = _DataManager.projectRepository.AddProject(projectName, projectDescription, start, end, 0, id);
                 _DataManager.teamRepository.AddTeam(Convert.ToInt32(personId),p.IdProject);
 
                 return RedirectToAction("Project", new { idProject = id });
             }
 
-            return View();
+            return RedirectToAction("AddWork", new { projectId = id });
         }
         #endregion
     }

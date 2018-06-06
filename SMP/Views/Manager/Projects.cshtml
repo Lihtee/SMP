@@ -34,6 +34,8 @@
             <table class="table table-bordered">
                 <tr>
                     <th>Название</th>
+                    <th>С</th>
+                    <th>По</th>
                     <th>Удалить</th>
                 </tr>
 
@@ -41,10 +43,12 @@
                 IEnumerable<Project> projects = ((IEnumerable<Project>)ViewData["projects"]);
                 for (int j = 0; j < projects.Count(); j++)
                 {
-                    <tr>
-                        <th>@Html.ActionLink("Проект " + projects.ElementAt(j).projectName, "Project", "Manager", routeValues: new { idProject = projects.ElementAt(j).IdProject }, htmlAttributes: new { @class = "btn" })</th>
-                        <th>@Html.ActionLink(" ", "DeleteProject", "Manager", routeValues: new { idProject = projects.ElementAt(j).IdProject }, htmlAttributes: new { @class = "btn glyphicon glyphicon-remove" })</th>
-                    </tr>
+                <tr>
+                    <th>@Html.ActionLink("Проект " + projects.ElementAt(j).projectName, "Project", "Manager", routeValues: new { idProject = projects.ElementAt(j).IdProject }, htmlAttributes: new { @class = "btn" })</th>
+                    <th>@projects.ElementAt(j).startDateTime.ToShortDateString()</th>
+                    <th>@projects.ElementAt(j).endDateTime.ToShortDateString()</th>
+                    <th>@Html.ActionLink(" ", "DeleteProject", "Manager", routeValues: new { idProject = projects.ElementAt(j).IdProject }, htmlAttributes: new { @class = "btn glyphicon glyphicon-remove" })</th>
+                </tr>
             }
                 }
             </table>
