@@ -92,7 +92,7 @@ namespace SMP.Models.Repositoryes
         /// <param name="parrentId">Id родительского проекта</param>
         /// <returns>Возвращает добавленный проект</returns>
         public Project AddProject(string projectName, string description,
-            DateTime start, DateTime end, decimal plannnedBudget,
+            DateTime start, DateTime end, decimal plannnedBudget, int reserve,
             int parrentId)
         {
 
@@ -106,6 +106,7 @@ namespace SMP.Models.Repositoryes
                 plannedBudget = plannnedBudget,
                 realBudget = null,
                 parrentProject = GetProjectById(parrentId),
+                reserve = reserve,
             };
             cont.Project.Add(p);
             cont.SaveChanges();
@@ -122,7 +123,7 @@ namespace SMP.Models.Repositoryes
         /// <param name="plannnedBudget">Плановый бюджет</param>
         /// <returns>Возвращает добавленный проект</returns>
         public Project AddProject(string projectName, string description,
-            DateTime start, DateTime end, decimal plannnedBudget)
+            DateTime start, DateTime end, decimal plannnedBudget, int reserve)
         {
 
             Project p = new Project
@@ -135,6 +136,7 @@ namespace SMP.Models.Repositoryes
                 plannedBudget = plannnedBudget,
                 realBudget = null,
                 parrentProject = null,
+                reserve = reserve,
             };
             cont.Project.Add(p);
             cont.SaveChanges();
@@ -153,7 +155,7 @@ namespace SMP.Models.Repositoryes
         /// <param name="parrentId">Id родительского проекта</param>
         /// <returns>Возвращает изменённый проект</returns>
         public Project EditProject(int id, string projectName, string description,
-            DateTime start, DateTime end, decimal plannnedBudget)
+            DateTime start, DateTime end, decimal plannnedBudget, int reserve)
         {
             Project p = GetProjectById(id);
 
@@ -164,6 +166,7 @@ namespace SMP.Models.Repositoryes
 
             p.plannedBudget = plannnedBudget;
             p.realBudget = null;
+            p.reserve = reserve;
             
             cont.SaveChanges();
             return p;

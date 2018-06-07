@@ -38,10 +38,10 @@ namespace SMP
             if (cont.Person == null || cont.Person.Count() == 0)
             {
                 personRepository.AddPerson("Менеджер", "Менеджер", "Менеджер",
-                "Manager", "Manager", (int)Position.Менеджер);
+                "Manager", "Manager", (int)Position.Менеджер, "", "");
 
                 personRepository.AddPerson("Исполнитель", "Исполнитель", "Исполнитель",
-                    "User", "User", (int)Position.Исполнитель);
+                    "User", "User", (int)Position.Исполнитель, "andriocactus@gmail.com", "");
             }
         }
     }

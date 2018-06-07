@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 04/18/2018 14:39:27
+-- Date Created: 06/07/2018 11:58:51
 -- Generated from EDMX file: D:\HSE\3Course\SMP\SMP\Models\Model.edmx
 -- --------------------------------------------------
 
@@ -65,6 +65,7 @@ CREATE TABLE [dbo].[Project] (
     [isClose] bit  NOT NULL,
     [plannedBudget] decimal(18,0)  NULL,
     [realBudget] decimal(18,0)  NULL,
+    [reserve] int  NOT NULL,
     [parrentProject_IdProject] int  NULL
 );
 GO
@@ -77,7 +78,9 @@ CREATE TABLE [dbo].[Person] (
     [middleName] nvarchar(max)  NULL,
     [Position] int  NOT NULL,
     [login] nvarchar(max)  NOT NULL,
-    [password] nvarchar(max)  NOT NULL
+    [password] nvarchar(max)  NOT NULL,
+    [email] nvarchar(max)  NOT NULL,
+    [phone] nvarchar(max)  NOT NULL
 );
 GO
 

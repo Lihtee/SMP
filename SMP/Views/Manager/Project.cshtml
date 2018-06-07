@@ -21,13 +21,13 @@
         {
             @Html.AntiForgeryToken()
 
-            @Html.Hidden("projectId", ((Person)Session["user"]).IdPerson.ToString())
+            @Html.Hidden("projectId", Model.IdProject)
 
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-12">
                     <p class="input-group">
                         <span class="input-group-addon" id="Firm">Название:</span>
-                        <input type="text" class="form-control" name="projectName" placeholder="Название" value=@Model.projectName>
+                        <input type="text" class="form-control" name="projectName" placeholder="Название" value='@Model.projectName'>
                         @Html.ValidationMessage("ProjectName")
                     </p>
                     <p class="input-group">
@@ -89,7 +89,8 @@
                 <table class="table table-bordered">
                     <tr>
                         <th>Название</th>
-                        <th>Сроки</th>
+                        <th>С</th>
+                        <th>По</th>
                         <th>Исполнитель</th>
                         <th></th>
                         <th></th>
@@ -101,7 +102,8 @@
                         {
                             <tr>
                                 <th>@("Работа: " + w.Project.projectName)</th>
-                                <th>@(w.Project.startDateTime.ToShortDateString() + '-' + w.Project.endDateTime.ToShortDateString())</th>
+                                <th>@w.Project.startDateTime.ToShortDateString()</th>
+                                <th>@w.Project.endDateTime.ToShortDateString()</th>
                                 <th>@(w.Person.firstName + ' ' + w.Person.surName)</th>
                                 <th>@Html.ActionLink("Подробнее", "Work", "Manager", routeValues: new { projectId = w.Project.IdProject }, htmlAttributes: new { @class = "btn" })</th>
                                 <th>@Html.ActionLink(" ", "DeleteWork", "Manager", routeValues: new { workId = w.Project.IdProject, projectId = Model.IdProject }, htmlAttributes: new { @class = "btn glyphicon glyphicon-remove" })</th>

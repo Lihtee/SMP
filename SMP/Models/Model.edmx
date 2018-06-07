@@ -44,6 +44,7 @@
     <Property Name="isClose" Type="bit" Nullable="false" DefaultValue="false" />
     <Property Name="plannedBudget" Type="decimal" Nullable="true" />
     <Property Name="realBudget" Type="decimal" Nullable="true" />
+    <Property Name="reserve" Type="int" Nullable="false" />
     <Property Name="parrentProject_IdProject" Type="int" Nullable="true" />
   </EntityType>
   <EntityType Name="Person">
@@ -57,6 +58,8 @@
     <Property Name="Position" Type="int" Nullable="false" />
     <Property Name="login" Type="nvarchar(max)" Nullable="false" />
     <Property Name="password" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="email" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="phone" Type="nvarchar(max)" Nullable="false" />
   </EntityType>
   <EntityType Name="Team">
     <Key>
@@ -178,6 +181,7 @@
           <NavigationProperty Name="parrentProject" Relationship="Model.ProjectProject" FromRole="Project1" ToRole="Project" />
           <Property Name="plannedBudget" Type="Decimal" Nullable="true" />
           <Property Name="realBudget" Type="Decimal" Nullable="true" />
+          <Property Name="reserve" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="Person">
           <Key>
@@ -190,6 +194,8 @@
           <Property Name="Position" Type="Model.Position" Nullable="false" />
           <Property Name="login" Type="String" Nullable="false" />
           <Property Name="password" Type="String" Nullable="false" />
+          <Property Name="email" Type="String" Nullable="false" />
+          <Property Name="phone" Type="String" Nullable="false" />
         </EntityType>
         <EnumType Name="Position">
           <Member Name="Менеджер" Value="0" />
@@ -249,6 +255,7 @@
           <ScalarProperty Name="isClose" ColumnName="isClose" />
           <ScalarProperty Name="plannedBudget" ColumnName="plannedBudget" />
           <ScalarProperty Name="realBudget" ColumnName="realBudget" />
+          <ScalarProperty Name="reserve" ColumnName="reserve" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -262,6 +269,8 @@
           <ScalarProperty Name="Position" ColumnName="Position" />
           <ScalarProperty Name="login" ColumnName="login" />
           <ScalarProperty Name="password" ColumnName="password" />
+          <ScalarProperty Name="email" ColumnName="email" />
+          <ScalarProperty Name="phone" ColumnName="phone" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

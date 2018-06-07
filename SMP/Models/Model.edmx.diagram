@@ -7,11 +7,11 @@
       <Diagram DiagramId="05df7ec243644a2180e1981505366914" Name="Diagram1" DisplayType="true" ZoomLevel="75" >
         <EntityTypeShape EntityType="Model.Project" Width="1.5" PointX="0.75" PointY="0.875" />
         <EntityTypeShape EntityType="Model.Person" Width="1.5" PointX="2.75" PointY="0.875" />
-        <EntityTypeShape EntityType="Model.Team" Width="1.5" PointX="2.75" PointY="4.375" />
+        <EntityTypeShape EntityType="Model.Team" Width="1.5" PointX="2.75" PointY="4.5" />
         <AssociationConnector Association="Model.PersonTeam" />
         <AssociationConnector Association="Model.ProjectTeam" />
         <AssociationConnector Association="Model.ProjectProject" />
-        <EntityTypeShape EntityType="Model.Addiction" Width="1.5" PointX="0.75" PointY="4.375" />
+        <EntityTypeShape EntityType="Model.Addiction" Width="1.5" PointX="0.75" PointY="4.5" />
         <AssociationConnector Association="Model.ProjectAddiction" />
         <AssociationConnector Association="Model.ProjectAddiction1" />
       </Diagram>
