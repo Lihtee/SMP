@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using SMP.Models;
+using SMP.Models.MailSender;
 
 namespace SMP.Controllers
 {
@@ -405,6 +406,11 @@ namespace SMP.Controllers
                 int id = Convert.ToInt32(projectId);
                 var p = _DataManager.projectRepository.AddProject(projectName, projectDescription, start, end, 0, id);
                 _DataManager.teamRepository.AddTeam(Convert.ToInt32(personId),p.IdProject);
+                //Отправить уведомление на почту исполнителя
+                var mailSender = new MailSender();
+                //У персоны нет поля email.
+                //string personMail = _DataManager.personRepository.GetPersonById(personId).email;
+                //mailSender.Send(personMail);
 
                 return RedirectToAction("Project", new { idProject = id });
             }
