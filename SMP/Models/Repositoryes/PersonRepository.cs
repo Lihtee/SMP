@@ -61,7 +61,7 @@ namespace SMP.Models.Repositoryes
         /// <param name="position">Номер должности</param>
         /// <returns>Добавленный пользователь</returns>
         public Person AddPerson(string firstName, string surName, string middleName,
-            string login, string password, int position)
+            string login, string password, int position, string email, string phone)
         {
             Person person = new Person
             {
@@ -71,6 +71,8 @@ namespace SMP.Models.Repositoryes
                 login = login,
                 password = password.GetHashCode().ToString(),
                 Position = (Position)position,
+                email = email,
+                phone = phone,
             };
             cont.Person.Add(person);
             cont.SaveChanges();
@@ -90,7 +92,7 @@ namespace SMP.Models.Repositoryes
         /// <returns>Изменённый пользователь</returns>
         public Person EditPerson(int personId, 
             string firstName, string surName, string middleName,
-            string login, string password, int position)
+            string login, string password, int position, string email, string phone)
         {
             Person person = GetPersonById(personId);
 
@@ -100,6 +102,8 @@ namespace SMP.Models.Repositoryes
             person.login = login;
             person.password = password;
             person.Position = (Position)position;
+            person.email = email;
+            person.phone = phone;
             
             cont.SaveChanges();
             return person;

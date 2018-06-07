@@ -129,7 +129,7 @@ namespace SMP.Controllers
 
             if (ModelState.IsValid)
             {
-                _DataManager.projectRepository.EditProject(id, projectName, projectDescription, start, end, 0);
+                _DataManager.projectRepository.EditProject(id, projectName, projectDescription, start, end, 0, 0);
                 GetProject(id);
                 GetPersons(id);
                 GetWorks(id);
@@ -166,15 +166,27 @@ namespace SMP.Controllers
         #endregion
 
         #region Add Project
+        //[HttpGet]
+        //public ActionResult AddProjectFirstStep()
+        //{
+        //    if (!AccessControll()) return RedirectToAction("AccesError");
+        //    return View();
+        //}
         [HttpGet]
-        public ActionResult AddProjectFirstStep()
+        public ActionResult AddProjectFirstStep(int? idProject)
         {
             if (!AccessControll()) return RedirectToAction("AccesError");
+            if (idProject.HasValue)
+            {
+                Project p = _DataManager.projectRepository.GetProjectById(idProject.Value);
+                ViewData.Model = p;
+                ViewData["length"] = (p.endDateTime - p.startDateTime).Days.ToString();
+            }
             return View();
         }
 
         [HttpPost]
-        public ActionResult AddProjectFirstStep(string projectName, string projectStart, string projectEnd, string projectDescription, string submit)
+        public ActionResult AddProjectFirstStep(int? idProject, string projectName, string projectStart, string projectEnd, string projectDescription, string submit)
         {
             if (string.IsNullOrWhiteSpace(projectName))
                 ModelState.AddModelError("ProjectName", "Навание проекта не может быть пустым");
@@ -213,7 +225,7 @@ namespace SMP.Controllers
 
             if (ModelState.IsValid)
             {
-                Project p = _DataManager.projectRepository.AddProject(projectName, projectDescription, start, end, 0);
+                Project p = _DataManager.projectRepository.AddProject(projectName, projectDescription, start, end, 0, 0);
                 _DataManager.teamRepository.AddTeam(((Person)Session["user"]).IdPerson, p.IdProject);
                 switch (submit)
                 {
@@ -222,6 +234,9 @@ namespace SMP.Controllers
                         break;
                     case "К шагу 2":
                         return RedirectToAction("AddProjectSecondStep",routeValues: new { projectId = p.IdProject });
+                        break;
+                    case "Готово":
+                        return RedirectToAction("AddProjectFirstStep", routeValues: new { idProject = p.IdProject });
                         break;
                 }
             }
@@ -348,7 +363,7 @@ namespace SMP.Controllers
             if (ModelState.IsValid)
             {
                 int id = Convert.ToInt32(projectId);
-                _DataManager.projectRepository.EditProject(id, projectName, projectDescription, start, end, 0);
+                _DataManager.projectRepository.EditProject(id, projectName, projectDescription, start, end, 0, 0);
                 //GetProject(id);
                 //GetPersons(id);
                 //GetWorks(id);
@@ -423,7 +438,7 @@ namespace SMP.Controllers
 
             if (ModelState.IsValid)
             {
-                var p = _DataManager.projectRepository.AddProject(projectName, projectDescription, start, end, 0, id);
+                var p = _DataManager.projectRepository.AddProject(projectName, projectDescription, start, end, 0, 0, id);
                 _DataManager.teamRepository.AddTeam(Convert.ToInt32(personId),p.IdProject);
 
                 return RedirectToAction("Project", new { idProject = id });

@@ -30,6 +30,7 @@ namespace SMP.Models
         public bool isClose { get; set; }
         public Nullable<decimal> plannedBudget { get; set; }
         public Nullable<decimal> realBudget { get; set; }
+        public int reserve { get; set; }
     
         public virtual Project parrentProject { get; set; }
     }
