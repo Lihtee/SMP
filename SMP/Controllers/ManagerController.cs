@@ -166,12 +166,6 @@ namespace SMP.Controllers
         #endregion
 
         #region Add Project
-        //[HttpGet]
-        //public ActionResult AddProjectFirstStep()
-        //{
-        //    if (!AccessControll()) return RedirectToAction("AccesError");
-        //    return View();
-        //}
         [HttpGet]
         public ActionResult AddProjectFirstStep(int? idProject)
         {
@@ -180,19 +174,19 @@ namespace SMP.Controllers
             {
                 Project p = _DataManager.projectRepository.GetProjectById(idProject.Value);
                 ViewData.Model = p;
-                ViewData["length"] = (p.endDateTime - p.startDateTime).Days.ToString();
+                ViewData["Length"] = ((p.endDateTime - p.startDateTime).Days / 2).ToString();
             }
             return View();
         }
 
         [HttpPost]
-        public ActionResult AddProjectFirstStep(int? idProject, string projectName, string projectStart, string projectEnd, string projectDescription, string submit)
+        public ActionResult AddProjectFirstStep(int? idProject, string projectName, string projectStart, string projectEnd, string projectDescription, int length, string submit)
         {
             if (string.IsNullOrWhiteSpace(projectName))
                 ModelState.AddModelError("ProjectName", "Навание проекта не может быть пустым");
 
             if (string.IsNullOrWhiteSpace(projectStart))
-                ModelState.AddModelError("ProjectStart", "Дата начала не может быть пустой");
+                ModelState.AddModelError("ProjectLength", "Дата начала не может быть пустой");
 
             DateTime start = new DateTime();
             try
@@ -201,11 +195,11 @@ namespace SMP.Controllers
             }
             catch (FormatException e)
             {
-                ModelState.AddModelError("ProjectStart", "Дата начала не является датой");
+                ModelState.AddModelError("ProjectLength", "Дата начала не является датой");
             }
 
             if (string.IsNullOrWhiteSpace(projectEnd))
-                ModelState.AddModelError("ProjectEnd", "Дата окончания не может быть пустой");
+                ModelState.AddModelError("ProjectLength", "Дата окончания не может быть пустой");
 
             DateTime end = new DateTime();
             try
@@ -214,19 +208,32 @@ namespace SMP.Controllers
             }
             catch (FormatException e)
             {
-                ModelState.AddModelError("ProjectEnd", "Дата окончания не является датой");
+                ModelState.AddModelError("ProjectLength", "Дата окончания не является датой");
             }
 
             if (start > end)
             {
-                ModelState.AddModelError("ProjectStart", "Дата начала должна быть до даты окончания");
-                ModelState.AddModelError("ProjectEnd", "Дата окончания должна быть после даты начала");
+                ModelState.AddModelError("ProjectLength", "Дата начала должна быть до даты окончания");
+            }
+
+            if (((end - start).Days / 2) < length)
+            {
+                ModelState.AddModelError("ProjectLength", "Резерв должен составлять не более\n половины срока выполнения проекта");
             }
 
             if (ModelState.IsValid)
             {
-                Project p = _DataManager.projectRepository.AddProject(projectName, projectDescription, start, end, 0, 0);
-                _DataManager.teamRepository.AddTeam(((Person)Session["user"]).IdPerson, p.IdProject);
+                Project p = new Project();
+                if (!idProject.HasValue)
+                {
+                    p = _DataManager.projectRepository.AddProject(projectName, projectDescription, start, end, 0, 1);
+                    _DataManager.teamRepository.AddTeam(((Person)Session["user"]).IdPerson, p.IdProject);
+                }
+                else
+                {
+                    p = _DataManager.projectRepository.EditProject(idProject.Value, projectName, projectDescription, start, end, 0, length);
+                }
+
                 switch (submit)
                 {
                     case "Сохранить изменения":
