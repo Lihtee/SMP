@@ -26,7 +26,6 @@
                     @*@Html.Hidden("projectId", ((Person)Session["user"]).IdPerson.ToString())*@
                     
                     <div class="row col-lg-12 col-md-12 col-sm-12">
-                        <input hidden id="realLength" value="@(ViewData["Length"] != null ? ViewData["Length"].ToString() : "1")"/>
                         <p class="input-group">
                             <span class="input-group-addon" id="Firm">Название:</span>
                             <input type="text" class="form-control" name="projectName" id="projectName" placeholder="Название" value="@(Model == null ? "" : Model.projectName)">
@@ -84,15 +83,15 @@
                             @if (Model != null)
                             {
                             <div class="col-lg-4 col-md-4 col-sm-12">
-                                <input class="btn btn-default" type="submit" value="Сохранить изменения" name="submit" onclick="return checkLength(sliderReserve.value, realLength.value);">
+                                <input class="btn btn-default" type="submit" value="Сохранить изменения" name="submit" onclick="return checkLength(length.value, length.max);">
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-12">
-                                <input class="btn btn-default" type="submit" value="К шагу 2" name="submit" onclick="return checkLength(sliderReserve.value, realLength.value);">
+                                <input class="btn btn-default" type="submit" value="К шагу 2" name="submit" onclick="return checkLength(length.value, length.max);">
                             </div>
                             }
                             <div class="col-lg-4 col-md-4 col-sm-12">
                                 <div class="btn btn-default">
-                                    @Html.ActionLink("Отмена", "Projects", "Manager", new { onclick = "return confirm('Are you sure?');" })
+                                    @Html.ActionLink("Отмена", "Projects", "Manager", new { onclick = "return confirm('Вы уверены, что не хотите сохранять этот проект?');" })
                                 </div>
                             </div>
                         </p>

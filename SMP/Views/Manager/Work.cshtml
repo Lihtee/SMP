@@ -22,7 +22,7 @@
         {
             @Html.AntiForgeryToken()
 
-            @Html.Hidden("projectId", ((Person)Session["user"]).IdPerson.ToString())
+            @Html.Hidden("projectId", Model.IdProject)
 
             <p class="input-group">
                 <span class="input-group-addon" id="Firm">Название:</span>

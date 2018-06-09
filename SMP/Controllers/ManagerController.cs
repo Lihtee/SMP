@@ -85,11 +85,24 @@ namespace SMP.Controllers
             GetPersons(idProject);
             GetWorks(idProject);
 
+            Project p = (Project)ViewData.Model;
+            int left = (p.endDateTime - DateTime.Now).Days;
+            if (left > p.reserve)
+                left = p.reserve;
+            ViewData["leftReserve"] = left.ToString();
+
+            ViewData["Length"] = (p.endDateTime - p.startDateTime).Days / 2;
+            
+            if (((IEnumerable<Team>)ViewData["works"]).Count() != 0)
+                ViewData["endOfLastWork"] = (p.endDateTime - ((IEnumerable<Team>)ViewData["works"]).Last().Project.endDateTime).Days;
+            else
+                ViewData["endOfLastWork"] = (p.endDateTime - p.startDateTime).Days;
+
             return View();
         }
         
         [HttpPost]
-        public ActionResult Project(string projectId, string projectName, string projectStart, string projectEnd, string projectDescription)
+        public ActionResult Project(string projectId, string projectName, string projectStart, string projectEnd, string projectDescription, int length)
         {
             if (string.IsNullOrWhiteSpace(projectName))
                 ModelState.AddModelError("ProjectName", "Навание проекта не может быть пустым");
@@ -129,7 +142,7 @@ namespace SMP.Controllers
 
             if (ModelState.IsValid)
             {
-                _DataManager.projectRepository.EditProject(id, projectName, projectDescription, start, end, 0, 0);
+                _DataManager.projectRepository.EditProject(id, projectName, projectDescription, start, end, 0, length);
                 GetProject(id);
                 GetPersons(id);
                 GetWorks(id);
@@ -331,7 +344,7 @@ namespace SMP.Controllers
         }
 
         [HttpPost]
-        public ActionResult Work(string projectId, string projectName, string projectStart, string projectEnd, string projectDescription, int personId, string submit)
+        public ActionResult Work(string projectId, string projectName, string projectStart, string projectEnd, string projectDescription, string submit)
         {
             if (string.IsNullOrWhiteSpace(projectName))
                 ModelState.AddModelError("ProjectName", "Навание проекта не может быть пустым");
@@ -370,11 +383,11 @@ namespace SMP.Controllers
             if (ModelState.IsValid)
             {
                 int id = Convert.ToInt32(projectId);
-                _DataManager.projectRepository.EditProject(id, projectName, projectDescription, start, end, 0, 0);
+                Project p = _DataManager.projectRepository.EditProject(id, projectName, projectDescription, start, end, 0, 0);
                 //GetProject(id);
                 //GetPersons(id);
                 //GetWorks(id);
-                return RedirectToAction("Project", new { idProject = id });
+                return RedirectToAction("Project", new { idProject = p.parrentProject.IdProject });
             }
 
             return View();
