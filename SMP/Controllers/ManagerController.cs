@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using SMP.Models;
+using SMP.Models.MailSender;
 
 namespace SMP.Controllers
 {
@@ -172,8 +173,16 @@ namespace SMP.Controllers
         
         public ActionResult DeleteWork(int workId, int projectId)
         {
-            _DataManager.projectRepository.DeleteProject(workId);
+            //Достаем работу и емейл персоны.
+            var work = _DataManager.projectRepository.GetProjectById(workId);
+            var team = _DataManager.teamRepository.GetTeamByWork(workId);
+            string email = team.Person.email;
 
+            //Отправить уведомление об отмене работы.
+            MailSender sender = new MailSender();
+            sender.SendCanceledWork(email, work);
+
+            _DataManager.projectRepository.DeleteProject(workId);
             return RedirectToAction("Project", new { idProject = projectId });
         }
         #endregion
@@ -344,7 +353,7 @@ namespace SMP.Controllers
         }
 
         [HttpPost]
-        public ActionResult Work(string projectId, string projectName, string projectStart, string projectEnd, string projectDescription, string submit)
+        public ActionResult Work(string projectId, string projectName, string projectStart, string projectEnd, string projectDescription, int team, string submit)
         {
             if (string.IsNullOrWhiteSpace(projectName))
                 ModelState.AddModelError("ProjectName", "Навание проекта не может быть пустым");
@@ -387,6 +396,13 @@ namespace SMP.Controllers
                 //GetProject(id);
                 //GetPersons(id);
                 //GetWorks(id);
+
+                //Отправить уведомление об изменинии в работе
+                MailSender sender = new MailSender();
+                string email = _DataManager.teamRepository.GetTeamById(team).Person.email;
+                var work = _DataManager.projectRepository.GetProjectById(id);
+                sender.SendChangeWork(email, work);
+
                 return RedirectToAction("Project", new { idProject = p.parrentProject.IdProject });
             }
 
@@ -460,6 +476,11 @@ namespace SMP.Controllers
             {
                 var p = _DataManager.projectRepository.AddProject(projectName, projectDescription, start, end, 0, 0, id);
                 _DataManager.teamRepository.AddTeam(Convert.ToInt32(personId),p.IdProject);
+               
+                //Отправить уведомление на почту исполнителя
+                var mailSender = new MailSender();
+                string personMail = _DataManager.personRepository.GetPersonById(personId).email;
+                mailSender.SendNewWork(personMail, project);
 
                 return RedirectToAction("Project", new { idProject = id });
             }

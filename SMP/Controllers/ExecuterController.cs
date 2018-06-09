@@ -27,7 +27,14 @@ namespace SMP.Controllers
         
         public ActionResult Work(string idWork)
         {
-            var vm = new ExecutorWorkViewModel(Convert.ToInt32(idWork), ((Person)Session["user"]).IdPerson);
+            int idPerson = ((Person)Session["user"]).IdPerson;
+            int idwork = Convert.ToInt32(idWork);
+            if (!WorkExists(idPerson, idwork))
+            {
+                //У исполнителя нет заявленной работы, возвращаем его на главную
+                return RedirectToAction("Index");
+            }
+            var vm = new ExecutorWorkViewModel(idwork, idPerson);
             return View(vm);
         }
         [HttpPost]
@@ -37,14 +44,25 @@ namespace SMP.Controllers
             {
                 case "finish":
                     {
+                        int idPerson = ((Person)Session["user"]).IdPerson;
+                        int idwork = Convert.ToInt32(idWork);
+                        if (!WorkExists(idPerson, idwork))
+                        {
+                            //У исполнителя нет заявленной работы, возвращаем его на главную
+                            break;
+                        }
                         var vm = new ProjectRepository(new Models.ModelContainer());
-                        vm.DoneProject(Convert.ToInt32(idWork));
+                        vm.DoneProject(idwork);
                     }
                     break;
-                case "back": break;
+                case "back": break;//На главную.
             }
-            
             return RedirectToAction("Index");
+        }
+
+        private bool WorkExists(int idPerson, int idWork)
+        {
+            return _DataManager.teamRepository.GetTeam(idPerson, idWork) == default(Team);
         }
     }
 }
