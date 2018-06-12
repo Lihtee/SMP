@@ -352,7 +352,7 @@ namespace SMP.Controllers
 
             return View();
         }
-
+        //team - это не айди команды, а айди персоны.
         [HttpPost]
         public ActionResult Work(string projectId, string projectName, string projectStart, string projectEnd, string projectDescription, int team, string submit)
         {
@@ -400,7 +400,7 @@ namespace SMP.Controllers
 
                 //Отправить уведомление об изменинии в работе
                 MailSender sender = new MailSender();
-                string email = _DataManager.teamRepository.GetTeamById(team).Person.email;
+                string email = _DataManager.personRepository.GetPersonById(team).email;
                 var work = _DataManager.projectRepository.GetProjectById(id);
                 //sender.SendChangeWork(email, work);
                 sender.Send(new WorkChangedMail(email, work));
