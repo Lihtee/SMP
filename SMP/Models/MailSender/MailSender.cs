@@ -24,9 +24,11 @@ namespace SMP.Models.MailSender
             this.systemName = "Уведомитель SMP";
         }
 
-        public bool Send(MailMessage template)
+        public bool Send(MailTemplate template)
         {
-            template.Sender = new MailAddress(systemEmail, systemName);
+            var message = template.GetHTMLtext();
+            message.Sender = new MailAddress(systemEmail, systemName);
+            message.From = message.Sender;
             using (SmtpClient smtp = new SmtpClient(SMTPadress, SMTPport))
             {
                 // логин и пароль
@@ -34,7 +36,7 @@ namespace SMP.Models.MailSender
                 smtp.EnableSsl = true;
                 try
                 {
-                    smtp.Send(template);
+                    smtp.Send(message);
                 }
                 catch (Exception e)
                 {

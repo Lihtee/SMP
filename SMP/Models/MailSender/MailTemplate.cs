@@ -13,7 +13,8 @@ namespace SMP.Models.MailSender
     {
         protected string receiverEmail;
         protected Project p;
-        protected string topic;
+
+        protected abstract string Topic { get; }
 
         protected abstract string Body { get; }
 
@@ -29,7 +30,7 @@ namespace SMP.Models.MailSender
             MailMessage res = new MailMessage();
             res.To.Add(receiverEmail);
             res.Body = Body;
-            res.Subject = topic;
+            res.Subject = Topic;
             res.IsBodyHtml = true;
             return res;
         }
@@ -37,20 +38,41 @@ namespace SMP.Models.MailSender
 
     public class NewWorkTemplate : MailTemplate
     {
-        public NewWorkTemplate(string _receiverEmail, Project _p) : base(_receiverEmail, _p)
-        {
-            this.topic = "Новая работа";
-        }
+        public NewWorkTemplate(string _receiverEmail, Project _p) : base(_receiverEmail, _p){}
+
+        protected override string Topic => "Новая работа";
 
         protected override string Body =>
                         $"<h2>У вас появилось новая работа: {p.projectName}</h2>" +
                         $"<p>Дедлайн: {p.endDateTime.ToShortDateString()}, {p.endDateTime.ToShortTimeString()} </p>" +
                         $"<p>Описание работы: {p.description}</p>";
 
-        public override MailMessage GetHTMLtext()
+    }
+
+    public class WorkChangedMail : MailTemplate
+    {
+        public WorkChangedMail(string _receiverEmail, Project _p) : base(_receiverEmail, _p)
         {
-            MailMessage res = base.GetHTMLtext();
-            return res;
         }
+
+        protected override string Topic => "Изменения в работе";
+        protected override string Body =>
+                        $"<h2>У вас изменилась работа: {p.projectName}</h2>" +
+                        $"<p>Новый дедлайн: {p.endDateTime.ToShortDateString()}, {p.endDateTime.ToShortTimeString()} </p>" +
+                        $"<p>Новое описание работы: {p.description}</p>";
+
+    }
+
+    public class WordCanceledMail : MailTemplate
+    {
+        public WordCanceledMail(string _receiverEmail, Project _p) : base(_receiverEmail, _p)
+        {
+        }
+
+        protected override string Topic => "Отмена работы";
+        protected override string Body =>
+                        $"<h2>Ваша работа {p.projectName} была отменена.</h2>";
+                        
+
     }
 }
