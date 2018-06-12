@@ -172,6 +172,7 @@
     </Compile>
     <Compile Include="Models\DataManager.cs" />
     <Compile Include="Models\MailSender\MailSender.cs" />
+    <Compile Include="Models\MailSender\MailTemplate.cs" />
     <Compile Include="Models\Model.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

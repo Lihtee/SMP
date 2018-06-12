@@ -13,6 +13,7 @@ namespace SMP.Models.MailSender
         private string systemPass;
         private string SMTPadress;
         private int SMTPport;
+        private string systemName;
 
         public MailSender()
         {
@@ -20,6 +21,31 @@ namespace SMP.Models.MailSender
             this.systemPass = "smp.notifier2018";
             this.SMTPadress = "smtp.gmail.com";
             this.SMTPport = 587;
+            this.systemName = "Уведомитель SMP";
+        }
+
+        public bool Send(MailTemplate template)
+        {
+            var message = template.GetHTMLtext();
+            message.Sender = new MailAddress(systemEmail, systemName);
+            message.From = message.Sender;
+            using (SmtpClient smtp = new SmtpClient(SMTPadress, SMTPport))
+            {
+                // логин и пароль
+                smtp.Credentials = new NetworkCredential(systemEmail, systemPass);
+                smtp.EnableSsl = true;
+                try
+                {
+                    smtp.Send(message);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return false;
+                }
+            }
+            return true;
+
         }
         
         public bool SendNewWork(string receiverMail, Project work)

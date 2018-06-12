@@ -180,7 +180,8 @@ namespace SMP.Controllers
 
             //Отправить уведомление об отмене работы.
             MailSender sender = new MailSender();
-            sender.SendCanceledWork(email, work);
+            //sender.SendCanceledWork(email, work);
+            sender.Send(new WordCanceledMail(email, work));
 
             _DataManager.projectRepository.DeleteProject(workId);
             return RedirectToAction("Project", new { idProject = projectId });
@@ -401,7 +402,8 @@ namespace SMP.Controllers
                 MailSender sender = new MailSender();
                 string email = _DataManager.teamRepository.GetTeamById(team).Person.email;
                 var work = _DataManager.projectRepository.GetProjectById(id);
-                sender.SendChangeWork(email, work);
+                //sender.SendChangeWork(email, work);
+                sender.Send(new WorkChangedMail(email, work));
 
                 return RedirectToAction("Project", new { idProject = p.parrentProject.IdProject });
             }
@@ -480,7 +482,7 @@ namespace SMP.Controllers
                 //Отправить уведомление на почту исполнителя
                 var mailSender = new MailSender();
                 string personMail = _DataManager.personRepository.GetPersonById(personId).email;
-                mailSender.SendNewWork(personMail, project);
+                mailSender.Send(new NewWorkTemplate(personMail, p));
 
                 return RedirectToAction("Project", new { idProject = id });
             }
