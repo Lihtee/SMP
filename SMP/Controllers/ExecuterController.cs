@@ -62,7 +62,7 @@ namespace SMP.Controllers
 
         private bool WorkExists(int idPerson, int idWork)
         {
-            return _DataManager.teamRepository.GetTeam(idPerson, idWork) == default(Team);
+            return _DataManager.teamRepository.GetTeam(idPerson, idWork) != default(Team);
         }
     }
 }
