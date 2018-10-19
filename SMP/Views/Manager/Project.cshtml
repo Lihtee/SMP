@@ -60,44 +60,39 @@
         </div>
         <div class="tab-content" id="team-content">
             <input hidden id="endOfLastWork" name="endOfLastWork" value="@ViewData["endOfLastWork"]"/>
-            <div class="tab">
-
-            </div>
-            <div class="col-lg-6 col-md-6 col-sm-12">
-                <h4 class="right">Команда</h4>
-                <p>
-                    <ul class="list-group">
-                        @{
-                            var teams = (IEnumerable<Team>) ViewData["teams"];
-                            foreach (var t in teams)
-                            {
-                                <li class="list-group-item">
-                                    <span>@Html.ActionLink(" ", "DeleteTeam", "Manager", new {teamId = t.IdTeam, projectId = Model.IdProject}, new {@class = "btn glyphicon glyphicon-remove"})</span>
-                                    @(t.Person.firstName + ' ' + t.Person.surName)
-                                </li>
-                            }
+            <h4 class="right">Команда</h4>
+            <p>
+                <ul class="list-group">
+                    @{
+                        var teams = (IEnumerable<Team>) ViewData["teams"];
+                        foreach (var t in teams)
+                        {
+                            <li class="list-group-item">
+                                <span>@Html.ActionLink(" ", "DeleteTeam", "Manager", new {teamId = t.IdTeam, projectId = Model.IdProject}, new {@class = "btn glyphicon glyphicon-remove"})</span>
+                                @(t.Person.firstName + ' ' + t.Person.surName)
+                            </li>
                         }
-                    </ul>
-                </p>
+                    }
+                </ul>
+            </p>
 
-                <hr/>
+            <hr/>
 
-                <h4 class="right">В запасе</h4>
-                <p>
-                    <ul class="list-group">
-                        @{
-                            var persons = (IEnumerable<Person>) ViewData["persons"];
-                            foreach (var p in persons)
-                            {
-                                <li class="list-group-item">
-                                    <span>@Html.ActionLink(" ", "AddTeam", "Manager", new {personId = p.IdPerson, projectId = Model.IdProject}, new {@class = "btn glyphicon glyphicon-plus"})</span>
-                                    @(p.firstName + ' ' + p.surName)
-                                </li>
-                            }
+            <h4 class="right">В запасе</h4>
+            <p>
+                <ul class="list-group">
+                    @{
+                        var persons = (IEnumerable<Person>) ViewData["persons"];
+                        foreach (var p in persons)
+                        {
+                            <li class="list-group-item">
+                                <span>@Html.ActionLink(" ", "AddTeam", "Manager", new {personId = p.IdPerson, projectId = Model.IdProject}, new {@class = "btn glyphicon glyphicon-plus"})</span>
+                                @(p.firstName + ' ' + p.surName)
+                            </li>
                         }
-                    </ul>
-                </p>
-            </div>
+                    }
+                </ul>
+            </p>
         </div>
         <div class="tab-content" id="works-content">
             <h2>Работы по проекту</h2>
