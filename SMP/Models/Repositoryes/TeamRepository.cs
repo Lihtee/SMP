@@ -77,6 +77,21 @@ namespace SMP.Models.Repositoryes
         }
 
         /// <summary>
+        /// Возвращает команд главного проекта
+        /// </summary>
+        /// <param name="projectId">Id проекта/работы</param>
+        /// <returns>Список команд</returns>
+        public List<Team> GetTeamsByParrentProject(int projectId)
+        {
+            Project project = cont.Project.SingleOrDefault(p => p.IdProject == id);
+            while (project.parrentProject == null)
+            {
+                project = project.parrentProject;
+            }
+            return GetTeamsByProject(project.IdProject);
+        }
+
+        /// <summary>
         /// Команду работы
         /// </summary>
         /// <param name="projectId">Id проекта</param>
