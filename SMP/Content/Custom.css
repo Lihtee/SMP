@@ -16,5 +16,12 @@
     display: block;
 }
 
+.hidden {
+    display: none;
+}
+
+.expander {
+    cursor: default;
+}
 
 

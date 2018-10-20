@@ -1,0 +1,75 @@
+﻿@using SMP.Models
+@using SMP.ViewModels
+@model TreeViewModel<Project>
+
+@{
+    var rootNodes = Model.Nodes;
+    <table class="table table-bordered">
+        <tr>
+            <th>Название</th>
+            <th>С</th>
+            <th>По</th>
+            <th>Статус</th>
+            <th></th>
+        </tr>
+        @foreach (var node in rootNodes)
+        {
+            @PrintRecursively(node)
+        }
+    </table>
+}
+
+@*Нехорошо объявлять тут функции, но так быстрее и проще.*@
+
+@helper PrintRecursively(TreeViewNode<Project> root, int level = 1, string parentId = "", int curId = 1)
+{
+    var hasChilds = root.NextLevelElements?.Count > 0;
+    var sId = string.IsNullOrEmpty(parentId)
+        ? curId.ToString()
+        : $"{parentId}-{curId}";
+    var indentLevel = sId.Split('-').Length;
+    var singleIndent = 18;
+    var status = "В работе";
+
+    if (root.Element.isClose)
+    {
+        status = "Закрыт";
+    }
+    else if (root.Element.isDone)
+    {
+        status = "Завершен";
+    }
+
+    <tr id="@sId" pId="@parentId" class="treeNode">
+        <td>
+            @if (hasChilds)
+            {
+                var caretIndentPower = $"{singleIndent}px";
+                <span class="expander" style="min-width: @caretIndentPower;">+</span>
+                indentLevel--;
+            }
+
+            @{
+                var indentPower = $"{indentLevel * singleIndent}px";
+                <span class="indent" style="padding-left: @indentPower">
+
+                </span>
+            }
+            <span>@Html.ActionLink(root.Element.projectName, "Work", "Manager", new {projectId = root.Element.IdProject}, new {@class = "btn"})</span>
+        </td>
+        <td>@root.Element.startDateTime.ToShortDateString()</td>
+        <td>@root.Element.endDateTime.ToShortDateString()</td>
+        <td>@status</td>
+        <th>@Html.ActionLink(" ", "DeleteWork", "Manager", new {workId = root.Element.IdProject}, new {@class = "btn glyphicon glyphicon-remove"})</th>
+    </tr>
+    if (hasChilds)
+    {
+        var nexId = 1;
+        foreach (var newRoot in root.NextLevelElements)
+        {
+            @PrintRecursively(newRoot, level + 1, sId, nexId)
+            ;
+            nexId++;
+        }
+    }
+}

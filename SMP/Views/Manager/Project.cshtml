@@ -1,4 +1,5 @@
 ﻿@using SMP.Models
+@using SMP.ViewModels
 @model Project
 
 @{
@@ -96,8 +97,9 @@
         </div>
         <div class="tab-content" id="works-content">
             <h2>Работы по проекту</h2>
-
-            <h3>@Html.ActionLink("Добавить работу", "AddWork", "Manager", new {projectId = Model.IdProject}, new {@class = "glyphicon glyphicon-plus"})</h3>
+     
+            @Html.Partial("GetWorksTree", (TreeViewModel<Project>)ViewData["treeView"])
+            <h3>@Html.ActionLink("Добавить работу", "AddWork", "Manager", new { projectId = Model.IdProject }, new { @class = "glyphicon glyphicon-plus" })</h3>
 
             <table class="table table-bordered">
                 <tr>
@@ -111,24 +113,27 @@
                 </tr>
 
                 @{
-                    var works = (IEnumerable<Team>) ViewData["works"];
-                    foreach (var w in works)
-                    {
-                        <tr>
-                            <th>@("Работа: " + w.Project.projectName)</th>
-                            <th>@w.Project.startDateTime.ToShortDateString()</th>
-                            <th>@w.Project.endDateTime.ToShortDateString()</th>
-                            <th>@(w.Person.firstName + ' ' + w.Person.surName)</th>
-                            @if (!w.Project.isDone)
-                            {<th>В работе</th>}
-                            @if (w.Project.isDone && !w.Project.isClose)
-                            {<th>Завершён</th>}
-                            @if (w.Project.isClose)
-                            {<th>Закрыт</th>}
-                            <th>@Html.ActionLink("Подробнее", "Work", "Manager", new {projectId = w.Project.IdProject}, new {@class = "btn"})</th>
-                            <th>@Html.ActionLink(" ", "DeleteWork", "Manager", new {workId = w.Project.IdProject, projectId = Model.IdProject}, new {@class = "btn glyphicon glyphicon-remove"})</th>
-                        </tr>
-                    }
+            var works = (IEnumerable<Team>)ViewData["works"];
+            foreach (var w in works)
+            {
+                <tr>
+                    <th>@("Работа: " + w.Project.projectName)</th>
+                    <th>@w.Project.startDateTime.ToShortDateString()</th>
+                    <th>@w.Project.endDateTime.ToShortDateString()</th>
+                    <th>@(w.Person.firstName + ' ' + w.Person.surName)</th>
+                    @if (!w.Project.isDone)
+            {
+                <th>В работе</th>}
+                    @if (w.Project.isDone && !w.Project.isClose)
+            {
+                <th>Завершён</th>}
+                    @if (w.Project.isClose)
+            {
+                <th>Закрыт</th>}
+                    <th>@Html.ActionLink("Подробнее", "Work", "Manager", new { projectId = w.Project.IdProject }, new { @class = "btn" })</th>
+                    <th>@Html.ActionLink(" ", "DeleteWork", "Manager", new { workId = w.Project.IdProject, projectId = Model.IdProject }, new { @class = "btn glyphicon glyphicon-remove" })</th>
+                </tr>
+    }
                 }
             </table>
         </div>
