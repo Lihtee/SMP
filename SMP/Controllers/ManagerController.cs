@@ -345,6 +345,28 @@ namespace SMP.Controllers
             path.Reverse();
             ViewData["path"] = path;
         }
+
+        private void GetTeam(int idProject)
+        {
+            SortedList<int, string> sl = new SortedList<int, string>();
+            foreach (Team t in _DataManager.teamRepository.GetTeamsByProject(_DataManager.projectRepository.GetProjectById(idProject).parrentProject.IdProject))
+            {
+                if (t.Person.Position == Position.Исполнитель)
+                    sl.Add(t.Person.IdPerson, t.Person.firstName + ' ' + t.Person.surName);
+            }
+            ViewData["Team"] = new SelectList(sl, "Key", "Value");
+        }
+
+        private void GetMainTeams(int idProject)
+        {
+            SortedList<int, string> sl = new SortedList<int, string>();
+            foreach (Team t in _DataManager.teamRepository.GetTeamsOfMainProject(idProject))
+            {
+                if (t.Person.Position == Position.Исполнитель)
+                    sl.Add(t.Person.IdPerson, t.Person.firstName + ' ' + t.Person.surName);
+            }
+            ViewData["Team"] = new SelectList(sl, "Key", "Value");
+        }
         #endregion
 
         #region Works
@@ -356,14 +378,7 @@ namespace SMP.Controllers
             GetWorks(projectId);
             GetProject(projectId);
             GetPath(projectId);
-
-            SortedList<int, string> sl = new SortedList<int, string>();
-            foreach (Team t in _DataManager.teamRepository.GetTeamsByProject(_DataManager.projectRepository.GetProjectById(projectId).parrentProject.IdProject))
-            {
-                if (t.Person.Position == Position.Исполнитель)
-                    sl.Add(t.Person.IdPerson, t.Person.firstName + ' ' + t.Person.surName);
-            }
-            ViewData["Team"] = new SelectList(sl, "Key", "Value");
+            GetTeam(projectId);
 
             return View();
         }
@@ -405,9 +420,9 @@ namespace SMP.Controllers
                 ModelState.AddModelError("ProjectLength", "Дата начала должна быть до даты окончания");
             }
 
+            int id = Convert.ToInt32(projectId);
             if (ModelState.IsValid)
             {
-                int id = Convert.ToInt32(projectId);
                 Project p = _DataManager.projectRepository.EditProject(id, projectName, projectDescription, start, end, 0, 0);
                 //GetProject(id);
                 //GetPersons(id);
@@ -426,25 +441,22 @@ namespace SMP.Controllers
                     return RedirectToAction("Work", new { projectId = p.parrentProject.IdProject });
             }
 
+
+            GetWorks(id);
+            GetProject(id);
+            GetPath(id);
+            GetTeam(id);
             return View();
         }
 
         [HttpGet]
         public ActionResult AddWork(int projectId)
         {
-            GetPath(projectId);
-
             if (!AccessControll()) return RedirectToAction("AccesError");
 
+            GetPath(projectId);
             GetProject(projectId);
-
-            SortedList<int, string> sl = new SortedList<int, string>();
-            foreach (Team t in _DataManager.teamRepository.GetTeamsOfMainProject(projectId))
-            {
-                if (t.Person.Position == Position.Исполнитель)
-                    sl.Add(t.Person.IdPerson, t.Person.firstName + ' ' + t.Person.surName);
-            }
-            ViewData["Team"] = new SelectList(sl, "Key", "Value");
+            GetMainTeams(projectId);
 
             return View();
         }
@@ -509,8 +521,12 @@ namespace SMP.Controllers
                 else
                     return RedirectToAction("Work", new { projectId = id });
             }
-
-            return RedirectToAction("AddWork", new { projectId = id });
+            
+            GetPath(id);
+            GetProject(id);
+            GetMainTeams(id);
+            //return RedirectToAction("AddWork", new { projectId = id });
+            return View();
         }
         #endregion
     }
