@@ -332,6 +332,19 @@ namespace SMP.Controllers
             ViewData["works"] = _DataManager.teamRepository.GetTeamsByParrentProject(idProject)
                 .OrderBy(w => w.Project.endDateTime);
         }
+
+        private void GetPath(int idProject)
+        {
+            List<Project> path = new List<Project>();
+            Project project = _DataManager.projectRepository.GetProjectById(idProject);
+            do
+            {
+                path.Add(project);
+                project = project.parrentProject;
+            } while (project != null);
+            path.Reverse();
+            ViewData["path"] = path;
+        }
         #endregion
 
         #region Works
@@ -342,6 +355,7 @@ namespace SMP.Controllers
 
             GetWorks(projectId);
             GetProject(projectId);
+            GetPath(projectId);
 
             SortedList<int, string> sl = new SortedList<int, string>();
             foreach (Team t in _DataManager.teamRepository.GetTeamsByProject(_DataManager.projectRepository.GetProjectById(projectId).parrentProject.IdProject))
