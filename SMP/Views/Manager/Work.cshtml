@@ -20,17 +20,12 @@
                 int i = 1;
                 <h5>
                     @Html.ActionLink("Менеджер - стартовая", "Projects", "Manager")
-                    @*</h4>
-                <h4>*@
                     > @Html.ActionLink("Проект: " + path[0].projectName, "Project", "Manager", routeValues: new { idProject = path[0].IdProject }, htmlAttributes: new { })
-                    @*</h5>*@
                     @while (i < path.Count - 1)
                     {
-                        @*<h5>*@
                         <a>
                             > @Html.ActionLink("Работа: " + path[i].projectName, "Work", "Manager", routeValues: new { projectId = path[i].IdProject }, htmlAttributes: new { })
                         </a>
-                        @*</h5>*@
                         i++;
                     }
                 </h5>
@@ -114,9 +109,16 @@
             </table>
 
             <p>
-                @Html.ActionLink("Назад", "Project", "Manager", routeValues: new { idProject = Model.parrentProject.IdProject }, htmlAttributes: new { @class = "btn btn-default" })
+                @if (Model.parrentProject.parrentProject == null)
+                {
+                    @Html.ActionLink("Назад", "Project", "Manager", routeValues: new { idProject = Model.parrentProject.IdProject }, htmlAttributes: new { @class = "btn btn-default" });
+                }
+                else
+                {
+                    @Html.ActionLink("Назад", "Work", "Manager", routeValues: new { projectId = Model.parrentProject.IdProject }, htmlAttributes: new { @class = "btn btn-default" })
+                }
                 <input class="btn btn-default" type="submit" value="Сохранить">
             </p>
-        }
+                    }
 </body>
 </html>

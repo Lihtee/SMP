@@ -420,7 +420,10 @@ namespace SMP.Controllers
                 //sender.SendChangeWork(email, work);
                 sender.Send(new WorkChangedMail(email, work));
 
-                return RedirectToAction("Project", new { idProject = p.parrentProject.IdProject });
+                if (p.parrentProject == null)
+                    return RedirectToAction("Project", new { idProject = p.parrentProject.IdProject });
+                else
+                    return RedirectToAction("Work", new { projectId = p.parrentProject.IdProject });
             }
 
             return View();
@@ -429,6 +432,8 @@ namespace SMP.Controllers
         [HttpGet]
         public ActionResult AddWork(int projectId)
         {
+            GetPath(projectId);
+
             if (!AccessControll()) return RedirectToAction("AccesError");
 
             GetProject(projectId);
@@ -499,7 +504,10 @@ namespace SMP.Controllers
                 string personMail = _DataManager.personRepository.GetPersonById(personId).email;
                 mailSender.Send(new NewWorkTemplate(personMail, p));
 
-                return RedirectToAction("Project", new { idProject = id });
+                if (p.parrentProject == null)
+                    return RedirectToAction("Project", new { idProject = id });
+                else
+                    return RedirectToAction("Work", new { projectId = id });
             }
 
             return RedirectToAction("AddWork", new { projectId = id });
