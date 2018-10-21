@@ -83,8 +83,8 @@ namespace SMP.Models.Repositoryes
         /// <returns>Список команд</returns>
         public List<Team> GetTeamsOfMainProject(int projectId)
         {
-            Project project = cont.Project.SingleOrDefault(p => p.IdProject == id);
-            while (project.parrentProject == null)
+            Project project = cont.Project.SingleOrDefault(p => p.IdProject == projectId);
+            while (project.parrentProject != null)
             {
                 project = project.parrentProject;
             }
