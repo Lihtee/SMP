@@ -51,6 +51,46 @@
                 @Html.DropDownList("team", (IEnumerable<SelectListItem>)ViewData["Team"], htmlAttributes: new { @class = "form-control" })
             </div>
 
+            <h4 class="right">Подработы:</h4>
+
+            <h4>@Html.ActionLink("Добавить работу", "AddWork", "Manager", new { projectId = Model.IdProject }, new { @class = "glyphicon glyphicon-plus" })</h4>
+
+            <table class="table table-bordered">
+                <tr>
+                    <th>Название</th>
+                    <th>С</th>
+                    <th>По</th>
+                    <th>Исполнитель</th>
+                    <th>Статус</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+
+                @{
+                    var works = (IEnumerable<Team>)ViewData["works"];
+                    foreach (var w in works)
+                    {
+                        <tr>
+                            <th>@("Работа: " + w.Project.projectName)</th>
+                            <th>@w.Project.startDateTime.ToShortDateString()</th>
+                            <th>@w.Project.endDateTime.ToShortDateString()</th>
+                            <th>@(w.Person.firstName + ' ' + w.Person.surName)</th>
+                            @if (!w.Project.isDone)
+                            {
+                                <th>В работе</th>}
+                            @if (w.Project.isDone && !w.Project.isClose)
+                            {
+                                <th>Завершён</th>}
+                            @if (w.Project.isClose)
+                            {
+                                <th>Закрыт</th>}
+                            <th>@Html.ActionLink("Подробнее", "Work", "Manager", new { projectId = w.Project.IdProject }, new { @class = "btn" })</th>
+                            <th>@Html.ActionLink(" ", "DeleteWork", "Manager", new { workId = w.Project.IdProject, projectId = Model.IdProject }, new { @class = "btn glyphicon glyphicon-remove" })</th>
+                        </tr>
+                    }
+                }
+            </table>
+
             <p>
                 @Html.ActionLink("Назад", "Project", "Manager", routeValues: new { idProject = Model.parrentProject.IdProject }, htmlAttributes: new { @class = "btn btn-default" })
                 <input class="btn btn-default" type="submit" value="Сохранить">

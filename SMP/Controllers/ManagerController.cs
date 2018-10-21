@@ -340,6 +340,7 @@ namespace SMP.Controllers
         {
             if (!AccessControll()) return RedirectToAction("AccesError");
 
+            GetWorks(projectId);
             GetProject(projectId);
 
             SortedList<int, string> sl = new SortedList<int, string>();
@@ -419,7 +420,7 @@ namespace SMP.Controllers
             GetProject(projectId);
 
             SortedList<int, string> sl = new SortedList<int, string>();
-            foreach (Team t in _DataManager.teamRepository.GetTeamsByProject(projectId))
+            foreach (Team t in _DataManager.teamRepository.GetTeamsOfMainProject(projectId))
             {
                 if (t.Person.Position == Position.Исполнитель)
                     sl.Add(t.Person.IdPerson, t.Person.firstName + ' ' + t.Person.surName);
