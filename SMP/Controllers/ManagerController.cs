@@ -332,6 +332,41 @@ namespace SMP.Controllers
             ViewData["works"] = _DataManager.teamRepository.GetTeamsByParrentProject(idProject)
                 .OrderBy(w => w.Project.endDateTime);
         }
+
+        private void GetPath(int idProject)
+        {
+            List<Project> path = new List<Project>();
+            Project project = _DataManager.projectRepository.GetProjectById(idProject);
+            do
+            {
+                path.Add(project);
+                project = project.parrentProject;
+            } while (project != null);
+            path.Reverse();
+            ViewData["path"] = path;
+        }
+
+        private void GetTeam(int idProject)
+        {
+            SortedList<int, string> sl = new SortedList<int, string>();
+            foreach (Team t in _DataManager.teamRepository.GetTeamsByProject(_DataManager.projectRepository.GetProjectById(idProject).parrentProject.IdProject))
+            {
+                if (t.Person.Position == Position.Исполнитель)
+                    sl.Add(t.Person.IdPerson, t.Person.firstName + ' ' + t.Person.surName);
+            }
+            ViewData["Team"] = new SelectList(sl, "Key", "Value");
+        }
+
+        private void GetMainTeams(int idProject)
+        {
+            SortedList<int, string> sl = new SortedList<int, string>();
+            foreach (Team t in _DataManager.teamRepository.GetTeamsOfMainProject(idProject))
+            {
+                if (t.Person.Position == Position.Исполнитель)
+                    sl.Add(t.Person.IdPerson, t.Person.firstName + ' ' + t.Person.surName);
+            }
+            ViewData["Team"] = new SelectList(sl, "Key", "Value");
+        }
         #endregion
 
         #region Works
@@ -340,15 +375,10 @@ namespace SMP.Controllers
         {
             if (!AccessControll()) return RedirectToAction("AccesError");
 
+            GetWorks(projectId);
             GetProject(projectId);
-
-            SortedList<int, string> sl = new SortedList<int, string>();
-            foreach (Team t in _DataManager.teamRepository.GetTeamsByProject(_DataManager.projectRepository.GetProjectById(projectId).parrentProject.IdProject))
-            {
-                if (t.Person.Position == Position.Исполнитель)
-                    sl.Add(t.Person.IdPerson, t.Person.firstName + ' ' + t.Person.surName);
-            }
-            ViewData["Team"] = new SelectList(sl, "Key", "Value");
+            GetPath(projectId);
+            GetTeam(projectId);
 
             return View();
         }
@@ -390,9 +420,9 @@ namespace SMP.Controllers
                 ModelState.AddModelError("ProjectLength", "Дата начала должна быть до даты окончания");
             }
 
+            int id = Convert.ToInt32(projectId);
             if (ModelState.IsValid)
             {
-                int id = Convert.ToInt32(projectId);
                 Project p = _DataManager.projectRepository.EditProject(id, projectName, projectDescription, start, end, 0, 0);
                 //GetProject(id);
                 //GetPersons(id);
@@ -405,9 +435,17 @@ namespace SMP.Controllers
                 //sender.SendChangeWork(email, work);
                 sender.Send(new WorkChangedMail(email, work));
 
-                return RedirectToAction("Project", new { idProject = p.parrentProject.IdProject });
+                if (p.parrentProject == null)
+                    return RedirectToAction("Project", new { idProject = p.parrentProject.IdProject });
+                else
+                    return RedirectToAction("Work", new { projectId = p.parrentProject.IdProject });
             }
 
+
+            GetWorks(id);
+            GetProject(id);
+            GetPath(id);
+            GetTeam(id);
             return View();
         }
 
@@ -416,15 +454,9 @@ namespace SMP.Controllers
         {
             if (!AccessControll()) return RedirectToAction("AccesError");
 
+            GetPath(projectId);
             GetProject(projectId);
-
-            SortedList<int, string> sl = new SortedList<int, string>();
-            foreach (Team t in _DataManager.teamRepository.GetTeamsByProject(projectId))
-            {
-                if (t.Person.Position == Position.Исполнитель)
-                    sl.Add(t.Person.IdPerson, t.Person.firstName + ' ' + t.Person.surName);
-            }
-            ViewData["Team"] = new SelectList(sl, "Key", "Value");
+            GetMainTeams(projectId);
 
             return View();
         }
@@ -484,10 +516,17 @@ namespace SMP.Controllers
                 string personMail = _DataManager.personRepository.GetPersonById(personId).email;
                 mailSender.Send(new NewWorkTemplate(personMail, p));
 
-                return RedirectToAction("Project", new { idProject = id });
+                if (p.parrentProject == null)
+                    return RedirectToAction("Project", new { idProject = id });
+                else
+                    return RedirectToAction("Work", new { projectId = id });
             }
-
-            return RedirectToAction("AddWork", new { projectId = id });
+            
+            GetPath(id);
+            GetProject(id);
+            GetMainTeams(id);
+            //return RedirectToAction("AddWork", new { projectId = id });
+            return View();
         }
         #endregion
     }

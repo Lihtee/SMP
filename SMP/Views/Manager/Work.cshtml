@@ -15,7 +15,24 @@
 <body>
     <div class="panel panel-default">
         <p class="row">
-            <h3>@Html.ActionLink("Менеджер - стартовая", "Projects", "Manager") > @Html.ActionLink("Проект: " + Model.parrentProject.projectName, "Project", "Manager", routeValues: new { idProject = Model.parrentProject.IdProject }, htmlAttributes: new { }) > Работа: @Model.projectName</h3>
+            @{
+                List<Project> path = (List<Project>)ViewData["path"];
+                int i = 1;
+                <h5>
+                    @Html.ActionLink("Менеджер - стартовая", "Projects", "Manager")
+                    > @Html.ActionLink("Проект: " + path[0].projectName, "Project", "Manager", routeValues: new { idProject = path[0].IdProject }, htmlAttributes: new { })
+                    @while (i < path.Count - 1)
+                    {
+                        <a>
+                            > @Html.ActionLink("Работа: " + path[i].projectName, "Work", "Manager", routeValues: new { projectId = path[i].IdProject }, htmlAttributes: new { })
+                        </a>
+                        i++;
+                    }
+                </h5>
+                <h3>
+                    Работа: @Model.projectName
+                </h3>
+            }
         </p>
 
         @using (Html.BeginForm())
@@ -51,10 +68,57 @@
                 @Html.DropDownList("team", (IEnumerable<SelectListItem>)ViewData["Team"], htmlAttributes: new { @class = "form-control" })
             </div>
 
+            <h4 class="right">Подработы:</h4>
+
+            <h4>@Html.ActionLink("Добавить работу", "AddWork", "Manager", new { projectId = Model.IdProject }, new { @class = "glyphicon glyphicon-plus" })</h4>
+
+            <table class="table table-bordered">
+                <tr>
+                    <th>Название</th>
+                    <th>С</th>
+                    <th>По</th>
+                    <th>Исполнитель</th>
+                    <th>Статус</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+
+                @{
+                    var works = (IEnumerable<Team>)ViewData["works"];
+                    foreach (var w in works)
+                    {
+                        <tr>
+                            <th>@("Работа: " + w.Project.projectName)</th>
+                            <th>@w.Project.startDateTime.ToShortDateString()</th>
+                            <th>@w.Project.endDateTime.ToShortDateString()</th>
+                            <th>@(w.Person.firstName + ' ' + w.Person.surName)</th>
+                            @if (!w.Project.isDone)
+                            {
+                                <th>В работе</th>}
+                            @if (w.Project.isDone && !w.Project.isClose)
+                            {
+                                <th>Завершён</th>}
+                            @if (w.Project.isClose)
+                            {
+                                <th>Закрыт</th>}
+                            <th>@Html.ActionLink("Подробнее", "Work", "Manager", new { projectId = w.Project.IdProject }, new { @class = "btn" })</th>
+                            <th>@Html.ActionLink(" ", "DeleteWork", "Manager", new { workId = w.Project.IdProject, projectId = Model.IdProject }, new { @class = "btn glyphicon glyphicon-remove" })</th>
+                        </tr>
+                    }
+                }
+            </table>
+
             <p>
-                @Html.ActionLink("Назад", "Project", "Manager", routeValues: new { idProject = Model.parrentProject.IdProject }, htmlAttributes: new { @class = "btn btn-default" })
+                @if (Model.parrentProject.parrentProject == null)
+                {
+                    @Html.ActionLink("Назад", "Project", "Manager", routeValues: new { idProject = Model.parrentProject.IdProject }, htmlAttributes: new { @class = "btn btn-default" });
+                }
+                else
+                {
+                    @Html.ActionLink("Назад", "Work", "Manager", routeValues: new { projectId = Model.parrentProject.IdProject }, htmlAttributes: new { @class = "btn btn-default" })
+                }
                 <input class="btn btn-default" type="submit" value="Сохранить">
             </p>
-        }
+                    }
 </body>
 </html>
