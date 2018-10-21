@@ -204,7 +204,7 @@ namespace SMP.Controllers
 
         #endregion
 
-            #region Add Project
+        #region Add Project
         [HttpGet]
         public ActionResult AddProjectFirstStep(int? idProject)
         {
@@ -356,7 +356,6 @@ namespace SMP.Controllers
                 works,
                 x => _DataManager.projectRepository.GetProjectsByParrentId(x.IdProject).ToList());
         }
-        #endregion
 
         private void GetPath(int idProject)
         {

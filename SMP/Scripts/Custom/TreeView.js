@@ -10,7 +10,7 @@ function OnExpanderClick() {
 /*
  * Сворачивает или разворачивает дерево в узле.
  */
-function ShowHide($node) {
+function ShowHide($node, root = true) {
     var $node = $($node).closest('.treeNode');
     var $children = $(".treeNode[pId = '" + $node.attr('id') + "']");
     if ($node.hasClass('expanded')) {
@@ -24,6 +24,10 @@ function ShowHide($node) {
     $children.each(function(ind, $el) {
         ShowHide($el);
     });
+
+    if ($node.hasClass('hidden')) {
+        $children.addClass('hidden');
+    }
 }
 
 function OnDocLoad() {
