@@ -30,6 +30,9 @@
     var indentLevel = sId.Split('-').Length;
     var singleIndent = 18;
     var status = "В работе";
+    string hidden = level == 1
+        ? ""
+        : "hidden";
 
     if (root.Element.isClose)
     {
@@ -40,8 +43,8 @@
         status = "Завершен";
     }
 
-    <tr id="@sId" pId="@parentId" class="treeNode">
-        <td>
+    <tr id="@sId" pId="@parentId" class="tree-node @hidden">
+        <td class="tree-td">
             @if (hasChilds)
             {
                 var caretIndentPower = $"{singleIndent}px";
