@@ -1,0 +1,31 @@
+﻿.tab-button {
+    display: inline-block;
+}
+
+.tab-button.active {
+    border-top: 1px solid black;
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
+
+.expander {
+    cursor: default;
+}
+
+.tree-td {
+    width: 50%;
+}
+
+

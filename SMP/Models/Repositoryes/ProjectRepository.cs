@@ -201,5 +201,32 @@ namespace SMP.Models.Repositoryes
             GetProjectById(id).isClose = true;
             cont.SaveChanges();
         }
+
+        /// <summary>
+        /// Возвращает проект верхнего уровня для проекта нижнего уровня.
+        /// </summary>
+        /// <param name="child">Проект нижнего уровня</param>
+        /// <returns></returns>
+        public Project GetInnerProject(Project child)
+        {
+            if (child == null)
+                return null;
+            Project res = child;
+            while (res.parrentProject != null)
+            {
+                res = res.parrentProject;
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// Возвращает проект верхнего уровня для проекта нижнего уровня.
+        /// </summary>
+        /// <param name="child">Id проекта нижнего уровня</param>
+        /// <returns></returns>
+        public Project GetInnerProject(int childId)
+        {
+            return GetInnerProject(GetProjectById(childId));
+        }
     }
 }
