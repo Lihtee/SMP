@@ -16,5 +16,16 @@
     display: block;
 }
 
+.hidden {
+    display: none;
+}
+
+.expander {
+    cursor: default;
+}
+
+.tree-td {
+    width: 50%;
+}
 
 

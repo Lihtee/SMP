@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using SMP.Models;
 using SMP.Models.MailSender;
+using SMP.ViewModels;
 
 namespace SMP.Controllers
 {
@@ -19,15 +19,15 @@ namespace SMP.Controllers
 
         public bool AccessControll()
         {
-            if (((Person)Session["user"]) == null)
+            if (((Person) Session["user"]) == null)
             {
                 return false;
             }
 
-            switch (((Person)Session["user"]).Position)
+            switch (((Person) Session["user"]).Position)
             {
                 case Position.Исполнитель:
-                    
+
                     return false;
                     break;
             }
@@ -41,6 +41,7 @@ namespace SMP.Controllers
         }
 
         #region Projects view
+
         public ActionResult Projects()
         {
             if (!AccessControll()) return RedirectToAction("AccesError");
@@ -59,11 +60,11 @@ namespace SMP.Controllers
             //}
 
             //ViewData["projects"] = projects;
-            ViewData["projects"] = 
-                _DataManager.teamRepository.GetTeamsByPerson(((Person)Session["user"]).IdPerson)
-                .Where(team => team.Project.parrentProject == null)
-                .Select(team => team.Project)
-                .OrderBy(p => p.endDateTime);
+            ViewData["projects"] =
+                _DataManager.teamRepository.GetTeamsByPerson(((Person) Session["user"]).IdPerson)
+                    .Where(team => team.Project.parrentProject == null)
+                    .Select(team => team.Project)
+                    .OrderBy(p => p.endDateTime);
 
             return View();
         }
@@ -74,9 +75,11 @@ namespace SMP.Controllers
 
             return RedirectToAction("Projects");
         }
+
         #endregion
 
         #region Project view
+
         [HttpGet]
         public ActionResult Project(int idProject)
         {
@@ -85,25 +88,28 @@ namespace SMP.Controllers
             GetProject(idProject);
             GetPersons(idProject);
             GetWorks(idProject);
+            GetTreeView(idProject);
 
-            Project p = (Project)ViewData.Model;
+            Project p = (Project) ViewData.Model;
             int left = (p.endDateTime - DateTime.Now).Days;
             if (left > p.reserve)
                 left = p.reserve;
             ViewData["leftReserve"] = left.ToString();
 
             ViewData["Length"] = (p.endDateTime - p.startDateTime).Days / 2;
-            
-            if (((IEnumerable<Team>)ViewData["works"]).Count() != 0)
-                ViewData["endOfLastWork"] = (p.endDateTime - ((IEnumerable<Team>)ViewData["works"]).Last().Project.endDateTime).Days;
+
+            if (((IEnumerable<Team>) ViewData["works"]).Count() != 0)
+                ViewData["endOfLastWork"] =
+                    (p.endDateTime - ((IEnumerable<Team>) ViewData["works"]).Last().Project.endDateTime).Days;
             else
                 ViewData["endOfLastWork"] = (p.endDateTime - p.startDateTime).Days;
 
             return View();
         }
-        
+
         [HttpPost]
-        public ActionResult Project(string projectId, string projectName, string projectStart, string projectEnd, string projectDescription, int length)
+        public ActionResult Project(string projectId, string projectName, string projectStart, string projectEnd,
+            string projectDescription, int length)
         {
             if (string.IsNullOrWhiteSpace(projectName))
                 ModelState.AddModelError("ProjectName", "Навание проекта не может быть пустым");
@@ -147,12 +153,14 @@ namespace SMP.Controllers
                 GetProject(id);
                 GetPersons(id);
                 GetWorks(id);
-                return RedirectToAction("Project", new { idProject = id });
+                GetTreeView(id);
+                return RedirectToAction("Project", new {idProject = id});
             }
 
             GetProject(id);
             GetPersons(id);
             GetWorks(id);
+            GetTreeView(id);
 
             return View();
         }
@@ -161,16 +169,16 @@ namespace SMP.Controllers
         {
             _DataManager.teamRepository.DeleteTeam(teamId);
 
-            return RedirectToAction("Project", new { idProject = projectId });
+            return RedirectToAction("Project", new {idProject = projectId});
         }
 
         public ActionResult AddTeam(int personId, int projectId)
         {
             _DataManager.teamRepository.AddTeam(personId, projectId);
 
-            return RedirectToAction("Project", new { idProject = projectId });
+            return RedirectToAction("Project", new {idProject = projectId});
         }
-        
+
         public ActionResult DeleteWork(int workId, int projectId)
         {
             //Достаем работу и емейл персоны.
@@ -184,8 +192,16 @@ namespace SMP.Controllers
             sender.Send(new WordCanceledMail(email, work));
 
             _DataManager.projectRepository.DeleteProject(workId);
-            return RedirectToAction("Project", new { idProject = projectId });
+            return RedirectToAction("Project", new {idProject = projectId});
         }
+
+        public ActionResult DeleteWork(int workId)
+        {
+            var project = _DataManager.projectRepository.GetInnerProject(workId);
+            return RedirectToAction("DeleteWork", new {workId, projectId = project.IdProject});
+        }
+
+
         #endregion
 
         #region Add Project
@@ -288,14 +304,14 @@ namespace SMP.Controllers
         {
             _DataManager.teamRepository.DeleteTeam(teamId);
 
-            return RedirectToAction("AddProjectSecondStep", new { projectId = projectId });
+            return RedirectToAction("AddProjectSecondStep", new {projectId });
         }
 
         public ActionResult AddTeamSecondStep(int personId, int projectId)
         {
             _DataManager.teamRepository.AddTeam(personId, projectId);
 
-            return RedirectToAction("AddProjectSecondStep", new { projectId = projectId });
+            return RedirectToAction("AddProjectSecondStep", new {projectId });
         }
         #endregion
 
@@ -331,6 +347,14 @@ namespace SMP.Controllers
         {
             ViewData["works"] = _DataManager.teamRepository.GetTeamsByParrentProject(idProject)
                 .OrderBy(w => w.Project.endDateTime);
+        }
+
+        private void GetTreeView(int idProject)
+        {
+            var works = _DataManager.projectRepository.GetProjectsByParrentId(idProject).ToList();
+            ViewData["treeView"] = TreeViewModel<Project>.BuildTree(
+                works,
+                x => _DataManager.projectRepository.GetProjectsByParrentId(x.IdProject).ToList());
         }
 
         private void GetPath(int idProject)
