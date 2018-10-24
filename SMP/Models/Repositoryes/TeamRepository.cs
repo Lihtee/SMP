@@ -51,7 +51,7 @@ namespace SMP.Models.Repositoryes
         /// <returns>Список команд</returns>
         public List<Team> GetTeamsByPerson(int personId)
         {
-            return cont.Team.ToList().FindAll(t => t.Person.IdPerson == personId);
+            return cont.Team.Where(t => t.Person.IdPerson == personId).ToList();
         }
 
         /// <summary>
