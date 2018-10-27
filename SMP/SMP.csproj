@@ -204,6 +204,7 @@
     <Compile Include="ViewModels\ExecutorIndexViewModel.cs" />
     <Compile Include="ViewModels\ExecutorWorkViewModel.cs" />
     <Compile Include="ViewModels\TreeViewModel.cs" />
+    <Compile Include="ViewModels\WorkViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
