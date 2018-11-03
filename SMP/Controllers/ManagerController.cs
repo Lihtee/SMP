@@ -403,12 +403,15 @@ namespace SMP.Controllers
             GetProject(projectId);
             GetPath(projectId);
             GetTeam(projectId);
+            var vm = new WorkViewModel(projectId);
 
-            return View();
+            return View(vm);
         }
         //team - это не айди команды, а айди персоны.
         [HttpPost]
-        public ActionResult Work(string projectId, string projectName, string projectStart, string projectEnd, string projectDescription, int team, string submit)
+        public ActionResult Work(string projectId, string projectName, 
+            string projectStart, string projectEnd, string projectDescription, 
+            Object selectedInlineWorks, int team, string submit)
         {
             if (string.IsNullOrWhiteSpace(projectName))
                 ModelState.AddModelError("ProjectName", "Навание проекта не может быть пустым");
@@ -447,10 +450,41 @@ namespace SMP.Controllers
             int id = Convert.ToInt32(projectId);
             if (ModelState.IsValid)
             {
+                List<Project> lastWorks = (from a
+                                           in _DataManager.addictionRepository.GetAddictionsByNextProjectID(id)
+                                           select a.lastProject).ToList();
+                List<int> selectedWorks = (from w
+                                           in (IEnumerable<string>)selectedInlineWorks
+                                           select Convert.ToInt32(w)).ToList();
+                //Запоминаем время последней предшествующей работы
+                DateTime lastDate = new DateTime(2000, 1, 1);
+                //Удаляем лишние предшествующие работы
+                foreach(Project lw in lastWorks)
+                {
+                    if (selectedWorks.Contains(lw.IdProject))
+                    {
+                        selectedWorks.Remove(lw.IdProject);
+                        if (lw.endDateTime > lastDate) lastDate = lw.endDateTime;
+                    }
+                    else
+                        _DataManager.addictionRepository.DeleteAddiction(_DataManager.addictionRepository.GetAddictionByProjectsId(lw.IdProject, id).Id);
+                }
+                //Создаём последовательности
+                foreach (int sw in selectedWorks)
+                {
+                    Project project = _DataManager.projectRepository.GetProjectById(sw);
+                    if (project.endDateTime > lastDate) lastDate = project.endDateTime;
+                    _DataManager.addictionRepository.AddAddiction(sw, id);
+                }
+                //Сдвигаем даты
+                if (lastDate != new DateTime(2000,1,1) && lastDate > start)
+                {
+                    TimeSpan d = lastDate - start;
+                    start += d;
+                    end += d;
+                }
+
                 Project p = _DataManager.projectRepository.EditProject(id, projectName, projectDescription, start, end, 0, 0);
-                //GetProject(id);
-                //GetPersons(id);
-                //GetWorks(id);
 
                 //Отправить уведомление об изменинии в работе
                 MailSender sender = new MailSender();
@@ -460,9 +494,9 @@ namespace SMP.Controllers
                 sender.Send(new WorkChangedMail(email, work));
 
                 if (p.parrentProject == null)
-                    return RedirectToAction("Project", new { idProject = p.parrentProject.IdProject });
+                    return RedirectToAction("Project", new { idProject = id });
                 else
-                    return RedirectToAction("Work", new { projectId = p.parrentProject.IdProject });
+                    return RedirectToAction("Work", new { projectId = id });
             }
 
 
@@ -470,7 +504,9 @@ namespace SMP.Controllers
             GetProject(id);
             GetPath(id);
             GetTeam(id);
-            return View();
+            var vm = new WorkViewModel(Convert.ToInt32(projectId));
+
+            return View(vm);
         }
 
         [HttpGet]
@@ -481,12 +517,15 @@ namespace SMP.Controllers
             GetPath(projectId);
             GetProject(projectId);
             GetMainTeams(projectId);
+            var vm = new WorkViewModel(Convert.ToInt32(projectId));
 
-            return View();
+            return View(vm);
         }
 
         [HttpPost]
-        public ActionResult AddWork(string projectId, string projectName, string projectStart, string projectEnd, string projectDescription, int personId, string submit)
+        public ActionResult AddWork(string projectId, string projectName, 
+            string projectStart, string projectEnd, string projectDescription,
+            Object selectedInlineWorks, int personId, string submit)
         {
             if (string.IsNullOrWhiteSpace(projectName))
                 ModelState.AddModelError("ProjectName", "Навание проекта не может быть пустым");
@@ -524,17 +563,22 @@ namespace SMP.Controllers
 
             int id = Convert.ToInt32(projectId);
             Project project = _DataManager.projectRepository.GetProjectById(id);
-            if (start < project.startDateTime || start > project.endDateTime ||
-                end < project.startDateTime || end > project.endDateTime)
-            {
-                ModelState.AddModelError("ProjectLength", "Начало или конец работы выходят за пределы проекта");
-            }
+            //if (start < project.startDateTime || start > project.endDateTime ||
+            //    end < project.startDateTime || end > project.endDateTime)
+            //{
+            //    ModelState.AddModelError("ProjectLength", "Начало или конец работы выходят за пределы проекта");
+            //}
 
             if (ModelState.IsValid)
             {
                 var p = _DataManager.projectRepository.AddProject(projectName, projectDescription, start, end, 0, 0, id);
                 _DataManager.teamRepository.AddTeam(Convert.ToInt32(personId),p.IdProject);
-               
+
+                foreach (string inlineWorkID in (IEnumerable<string>)selectedInlineWorks)
+                {
+                    _DataManager.addictionRepository.AddAddiction(Convert.ToInt32(projectId), Convert.ToInt32(inlineWorkID));
+                }
+
                 //Отправить уведомление на почту исполнителя
                 var mailSender = new MailSender();
                 string personMail = _DataManager.personRepository.GetPersonById(personId).email;
@@ -549,8 +593,9 @@ namespace SMP.Controllers
             GetPath(id);
             GetProject(id);
             GetMainTeams(id);
-            //return RedirectToAction("AddWork", new { projectId = id });
-            return View();
+            var vm = new WorkViewModel(Convert.ToInt32(projectId));
+
+            return View(vm);
         }
         #endregion
     }

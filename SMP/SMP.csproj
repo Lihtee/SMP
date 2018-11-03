@@ -194,6 +194,7 @@
     <Compile Include="Models\Project.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Repositoryes\AddictionRepository.cs" />
     <Compile Include="Models\Repositoryes\PersonRepository.cs" />
     <Compile Include="Models\Repositoryes\ProjectRepository.cs" />
     <Compile Include="Models\Repositoryes\TeamRepository.cs" />
@@ -204,6 +205,7 @@
     <Compile Include="ViewModels\ExecutorIndexViewModel.cs" />
     <Compile Include="ViewModels\ExecutorWorkViewModel.cs" />
     <Compile Include="ViewModels\TreeViewModel.cs" />
+    <Compile Include="ViewModels\WorkViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
