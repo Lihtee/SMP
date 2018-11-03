@@ -9,9 +9,12 @@ namespace SMP.Models.Repositoryes
     {
         static ModelContainer cont = new ModelContainer();
 
+        private readonly ProjectRepository ProjectRepository;
+
         public AddictionRepository(ModelContainer _cont)
         {
             cont = _cont;
+            ProjectRepository = new ProjectRepository(cont);
         }
 
         /// <summary>
@@ -109,5 +112,178 @@ namespace SMP.Models.Repositoryes
             cont.Addiction.Remove(GetAddictionById(addictiontId));
             cont.SaveChanges();
         }
+
+        #region PeriodAmending
+
+        /// <summary>
+        /// Изменяет сроки работы. 
+        /// </summary>
+        /// <param name="project">Еще не сохраненная в БД работа.</param>
+        /// <returns>Измененные проекты.</returns>
+        public void AmendPeriod(Project project)
+        {
+            DoRecShift(project, true);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="current"></param>
+        /// <param name="pushChildren">Надо ли толкать нижние работы (ставить в false, если метод вызывается для родительской работы)</param>
+        /// <returns></returns>
+        private void DoRecShift(Project current, bool pushChildren)
+        {
+            if (pushChildren)
+            {
+                var old = ProjectRepository.GetProjectById(current.IdProject);
+                // Сначала двигаем нижние работы.
+                // Допущение о том, что работы, имеющие потомков, не изменяют свою длительность. 
+                var shift = current.endDateTime - old.endDateTime;
+                MoveChildren(current, shift);
+
+            }
+
+            // Толкаем следующие работы.
+            var nexts = GetAddictionsByLastProjectID(current.IdProject).Select(x => x.nextProject).ToList();
+            if (nexts.Any())
+            {
+                foreach (var next in nexts)
+                {
+                    if (ForvardPropagation(current, next))
+                    {
+                        DoRecShift(next, true);
+                    }
+                }
+            }
+            else
+            {
+                // Пробуем толкнуть верхнюю работу самой поздней нижней. 
+                var latest = ProjectRepository
+                    .GetProjectsByParrentId(current.parrentProject?.IdProject ?? -1)
+                    .OrderByDescending(x => x.endDateTime)
+                    .FirstOrDefault();
+                if (latest?.IdProject == current.IdProject && UpperPropagation(current, current.parrentProject, true))
+                {
+                    DoRecShift(current.parrentProject, false);
+                }
+            }
+
+            //Толкаем предыдущие работы. 
+            var prevs = GetAddictionsByNextProjectID(current.IdProject).Select(x => x.lastProject).ToList();
+            if (prevs.Any())
+            {
+                foreach (var prev in prevs)
+                {
+                    if (BackwardPropagation(current, prev))
+                    {
+                        DoRecShift(prev, true);
+                    }
+                }
+            }
+            else
+            {
+                // Пробуем толкнуть верхнюю работу самой ранней нижней.
+                var earliest = ProjectRepository
+                    .GetProjectsByParrentId(current.parrentProject?.IdProject ?? -1)
+                    .OrderBy(x => x.startDateTime)
+                    .FirstOrDefault();
+                if (earliest?.IdProject == current.IdProject &&
+                    UpperPropagation(current, current.parrentProject, false))
+                {
+                    DoRecShift(current.parrentProject, false);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Распространяет изменения на следущую работу.
+        /// </summary>
+        /// <param name="prev"></param>
+        /// <param name="next"></param>
+        /// <returns></returns>
+        private bool ForvardPropagation(Project prev, Project next)
+        {
+            bool res = false;
+            var pushShift = prev.endDateTime - next.startDateTime;
+            var nextDur = next.endDateTime - next.startDateTime;
+
+            // Толкаем работу. 
+            if (pushShift.TotalMilliseconds > 0)
+            {
+                next.startDateTime = prev.endDateTime;
+                next.endDateTime = next.startDateTime + nextDur;
+                res = true;
+            }
+            
+            return res;
+        }
+
+        /// <summary>
+        /// Распространяет изменения на предыдущую работу.
+        /// </summary>
+        /// <param name="prev"></param>
+        /// <param name="next"></param>
+        /// <returns></returns>
+        private bool BackwardPropagation(Project next, Project prev)
+        {
+            bool res = false;
+            var pushShift = prev.endDateTime - next.startDateTime;
+            var prevDur = next.endDateTime - next.startDateTime;
+
+            // Толкаем или тянем работу. 
+            if (pushShift.TotalMilliseconds < 0)
+            {
+                prev.endDateTime = next.startDateTime;
+                prev.startDateTime = prev.endDateTime - prevDur;
+                res = true;
+            }
+
+            return res;
+        }
+
+        /// <summary>
+        /// Толкает верхнюю работу. 
+        /// </summary>
+        /// <param name="lower"></param>
+        /// <param name="higher"></param>
+        /// <returns></returns>
+        private bool UpperPropagation(Project lower, Project higher, bool last)
+        {
+            if (higher == null)
+            {
+                return false;
+            }
+
+            bool res = false;
+            if (last && lower.endDateTime != higher.endDateTime)
+            {
+                higher.endDateTime = lower.endDateTime;
+                res = true;
+            }
+
+            if (!last && lower.startDateTime != higher.startDateTime)
+            {
+                higher.startDateTime = lower.startDateTime;
+                res = true;
+            }
+
+            return res;
+        }
+
+        /// <summary>
+        /// Двигает все нижние работы.
+        /// </summary>
+        /// <param name="shift"></param>
+        private void MoveChildren(Project root, TimeSpan shift)
+        {
+            var children = ProjectRepository.GetProjectsByParrentId(root.IdProject);
+            foreach (var child in children)
+            {
+                child.startDateTime += shift;
+                child.endDateTime += shift;
+                MoveChildren(child, shift);
+            }
+        }
+        #endregion
     }
 }
