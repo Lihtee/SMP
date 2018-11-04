@@ -484,6 +484,8 @@ namespace SMP.Controllers
                     end += d;
                 }
 
+                Project forPeriodAmending = _DataManager.projectRepository.GetProjectById(id);
+                _DataManager.addictionRepository.AmendPeriod(forPeriodAmending);
                 Project p = _DataManager.projectRepository.EditProject(id, projectName, projectDescription, start, end, 0, 0);
 
                 //Отправить уведомление об изменинии в работе
