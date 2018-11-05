@@ -51,7 +51,7 @@ namespace SMP.Models.Repositoryes
         /// <returns>Список зависимостей</returns>
         public List<Addiction> GetAddictionsByLastProjectID(int Id)
         {
-            return cont.Addiction.OrderBy(p => p.lastProject.IdProject == Id).ToList();
+            return cont.Addiction.Where(p => p.lastProject.IdProject == Id).ToList();
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace SMP.Models.Repositoryes
         /// <returns>Список зависимостей</returns>
         public List<Addiction> GetAddictionsByNextProjectID(int Id)
         {
-            return cont.Addiction.OrderBy(p => p.nextProject.IdProject == Id).ToList();
+            return cont.Addiction.Where(p => p.nextProject.IdProject == Id).ToList();
         }
 
         /// <summary>
