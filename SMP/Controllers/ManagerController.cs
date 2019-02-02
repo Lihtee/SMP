@@ -71,7 +71,7 @@ namespace SMP.Controllers
 
         public ActionResult DeleteProject(int idProject)
         {
-            _DataManager.projectRepository.DeleteProject(idProject);
+            _DataManager.projectRepository.DeleteProject(idProject, idProject);
 
             return RedirectToAction("Projects");
         }
@@ -191,14 +191,14 @@ namespace SMP.Controllers
             //sender.SendCanceledWork(email, work);
             sender.Send(new WordCanceledMail(email, work));
 
-            _DataManager.projectRepository.DeleteProject(workId);
+            _DataManager.projectRepository.DeleteProject(workId, workId);
             return RedirectToAction("Project", new {idProject = projectId});
         }
 
-        public ActionResult DeleteWork(int workId)
+        public ActionResult DelWork(int workId)
         {
             var project = _DataManager.projectRepository.GetInnerProject(workId);
-            return RedirectToAction("DeleteWork", new {workId, projectId = project.IdProject});
+            return RedirectToAction("DeleteWork", new { workId, projectId = project.IdProject });
         }
 
 
@@ -391,6 +391,20 @@ namespace SMP.Controllers
             }
             ViewData["Team"] = new SelectList(sl, "Key", "Value");
         }
+
+        private bool CheckPersonTime(DateTime start, DateTime end, int personId, int parrentID)
+        {
+            List<Project> works = (from p in _DataManager.projectRepository.GetProjectsByPersonId(personId)
+                                   where p.parrentProject != null && p.IdProject != parrentID
+                                   select p).ToList();
+
+            foreach (Project work in works)
+            {
+                if ((start >= work.startDateTime && start <= work.endDateTime) || (end >= work.startDateTime && end <= work.endDateTime)) return true;
+            }
+
+            return false;
+        }
         #endregion
 
         #region Works
@@ -571,6 +585,8 @@ namespace SMP.Controllers
             //    ModelState.AddModelError("ProjectLength", "Начало или конец работы выходят за пределы проекта");
             //}
 
+            if (CheckPersonTime(start, end, Convert.ToInt32(personId), id)) ModelState.AddModelError("ProjectLength", "Исполнитель на это время уже занят в другой работе");
+
             if (ModelState.IsValid)
             {
                 var p = _DataManager.projectRepository.AddProject(projectName, projectDescription, start, end, 0, 0, id);
@@ -581,15 +597,17 @@ namespace SMP.Controllers
                     _DataManager.addictionRepository.AddAddiction(Convert.ToInt32(projectId), Convert.ToInt32(inlineWorkID));
                 }
 
+                if (p.parrentProject.parrentProject != null) _DataManager.teamRepository.DeleteTeam(_DataManager.teamRepository.GetTeamByWork(p.parrentProject.IdProject).IdTeam);
+               
                 //Отправить уведомление на почту исполнителя
                 var mailSender = new MailSender();
                 string personMail = _DataManager.personRepository.GetPersonById(personId).email;
                 mailSender.Send(new NewWorkTemplate(personMail, p));
 
                 if (p.parrentProject == null)
-                    return RedirectToAction("Project", new { idProject = id });
+                    return RedirectToAction("Project", new { idProject = p.IdProject });
                 else
-                    return RedirectToAction("Work", new { projectId = id });
+                    return RedirectToAction("Work", new { projectId = p.IdProject });
             }
             
             GetPath(id);
