@@ -63,7 +63,7 @@
         <td>@root.Element.startDateTime.ToShortDateString()</td>
         <td>@root.Element.endDateTime.ToShortDateString()</td>
         <td>@status</td>
-        <th>@Html.ActionLink(" ", "DeleteWork", "Manager", new {workId = root.Element.IdProject}, new {@class = "btn glyphicon glyphicon-remove"})</th>
+        <th>@Html.ActionLink(" ", "DelWork", "Manager", new {workId = root.Element.IdProject}, new {@class = "btn glyphicon glyphicon-remove"})</th>
     </tr>
     if (hasChilds)
     {
