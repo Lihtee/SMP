@@ -30,7 +30,7 @@ namespace SMP.Models.Repositoryes
         /// <returns></returns>
         public Team GetTeamById(int teamId)
         {
-            return cont.Team.ToList().Find(t => t.IdTeam == teamId);
+            return cont.Team.Single(t => t.IdTeam == teamId);
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace SMP.Models.Repositoryes
         /// <returns>Команду</returns>
         public Team GetTeam(int personId, int projectId)
         {
-            return cont.Team.ToList().Find(t => t.Person.IdPerson == personId && t.Project.IdProject == projectId);
+            return cont.Team.Single(t => t.Person.IdPerson == personId && t.Project.IdProject == projectId);
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace SMP.Models.Repositoryes
         /// <returns>Список команд</returns>
         public List<Team> GetTeamsByPerson(int personId)
         {
-            return cont.Team.ToList().FindAll(t => t.Person.IdPerson == personId);
+            return cont.Team.Where(t => t.Person.IdPerson == personId).ToList();
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace SMP.Models.Repositoryes
         /// <returns>Список команд</returns>
         public List<Team> GetTeamsByProject(int projectId)
         {
-            return cont.Team.ToList().FindAll(t => t.Project.IdProject == projectId);
+            return cont.Team.Where(t => t.Project.IdProject == projectId).ToList();
         }
 
         /// <summary>
