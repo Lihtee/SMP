@@ -1,0 +1,24 @@
+﻿@model SMP.ViewModels.ManagerReportViewModel
+<div>
+    <p class="lead">@Model.Project.projectName</p>
+</div>
+<div>
+    <p class="lead">@Model.Project.startDateTime.ToShortDateString() - @Model.Project.endDateTime.ToShortDateString()</p>
+</div>
+<div>
+    <p class="lead">Завершено работ @Model.WorksCompleted из @Model.WorksInTotal (@(Model.CompletionRate * 100) %)</p>
+</div>
+<div>
+    <p class="lead">Резервного времени задействовано (дней): @Model.ReserveDaysUsed из @Model.Project.reserve (@(@Model.ReserveDaysRate * 100) %)</p>
+</div>
+<div>
+    <p class="lead">Список заверщенных работ самого верхнего уровня:</p>
+    <ul class="list-group">
+        @{
+            foreach (var work in @Model.TopLevelCompletedWorks)
+            {
+                <li class="list-group-item">@work.projectName</li>
+            }
+        }
+    </ul>
+</div>

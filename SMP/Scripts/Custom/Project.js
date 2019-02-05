@@ -5,6 +5,7 @@ function OnTabClick() {
     var projectInfoBtnId = 'project-info-btn';
     var teamBtn = 'team-btn';
     var worksBtn = 'works-btn';
+    var reportBtn = 'report-btn';
 
     // Привязываем кнопки к контентам вкладок. 
     $('#' + projectInfoBtnId).click(function() {
@@ -15,6 +16,9 @@ function OnTabClick() {
     });
     $('#' + worksBtn).click(function() {
         ActivateTab(worksBtn, 'works-content');
+    });
+    $('#' + reportBtn).click(function() {
+        ActivateTab(reportBtn, 'report-content');
     });
 }
 
