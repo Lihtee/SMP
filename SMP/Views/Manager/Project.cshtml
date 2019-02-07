@@ -14,11 +14,11 @@
     <title>Project</title>
 </head>
 <body>
-<div class="panel panel-default">
-    <p class="row">
-        <h3>@Html.ActionLink("Менеджер - стартовая", "Projects", "Manager") > Проект: @Model.projectName </h3>
-    </p>
-    @using (Html.BeginForm())
+    <div class="panel panel-default">
+        <p class="row">
+            <h3>@Html.ActionLink("Менеджер - стартовая", "Projects", "Manager") > Проект: @Model.projectName </h3>
+        </p>
+        @using (Html.BeginForm())
     {
         @Html.AntiForgeryToken()
         @Html.Hidden("projectId", Model.IdProject)
@@ -31,6 +31,9 @@
         </div>
         <div class="tab-button" id="works-btn">
             Работы
+        </div>
+        <div class="tab-button" id="report-btn">
+            Отчет о ходе проекта
         </div>
         <div class="tab-content active" id="project-info-content">
             <p class="input-group">
@@ -51,7 +54,7 @@
             </p>
             <p class="input-group col-lg-9 col-md-11 col-sm-12">
                 <span class="input-group-addon">Резерв: </span>
-                <input class="form-control" type="range" min="1" max="@(ViewData["Length"])" value="@Model.reserve" name="length" id="sliderReserve" onchange="show_value(this.value)"/>
+                <input class="form-control" type="range" min="1" max="@(ViewData["Length"])" value="@Model.reserve" name="length" id="sliderReserve" onchange="show_value(this.value)" />
                 <span class="input-group-addon" id="slider_value">@Model.reserve</span>
             </p>
             <p class="input-group col-lg-12 col-md-12 col-sm-12">
@@ -60,44 +63,44 @@
             </p>
         </div>
         <div class="tab-content" id="team-content">
-            <input hidden id="endOfLastWork" name="endOfLastWork" value="@ViewData["endOfLastWork"]"/>
+            <input hidden id="endOfLastWork" name="endOfLastWork" value="@ViewData["endOfLastWork"]" />
             <h4 class="right">Команда</h4>
             <p>
                 <ul class="list-group">
                     @{
-                        var teams = (IEnumerable<Team>) ViewData["teams"];
-                        foreach (var t in teams)
-                        {
-                            <li class="list-group-item">
-                                <span>@Html.ActionLink(" ", "DeleteTeam", "Manager", new {teamId = t.IdTeam, projectId = Model.IdProject}, new {@class = "btn glyphicon glyphicon-remove"})</span>
-                                @(t.Person.firstName + ' ' + t.Person.surName)
-                            </li>
-                        }
+                    var teams = (IEnumerable<Team>)ViewData["teams"];
+                    foreach (var t in teams)
+                    {
+                        <li class="list-group-item">
+                            <span>@Html.ActionLink(" ", "DeleteTeam", "Manager", new { teamId = t.IdTeam, projectId = Model.IdProject }, new { @class = "btn glyphicon glyphicon-remove" })</span>
+                            @(t.Person.firstName + ' ' + t.Person.surName)
+                        </li>
+                }
                     }
                 </ul>
             </p>
 
-            <hr/>
+            <hr />
 
             <h4 class="right">В запасе</h4>
             <p>
                 <ul class="list-group">
                     @{
-                        var persons = (IEnumerable<Person>) ViewData["persons"];
-                        foreach (var p in persons)
-                        {
-                            <li class="list-group-item">
-                                <span>@Html.ActionLink(" ", "AddTeam", "Manager", new {personId = p.IdPerson, projectId = Model.IdProject}, new {@class = "btn glyphicon glyphicon-plus"})</span>
-                                @(p.firstName + ' ' + p.surName)
-                            </li>
-                        }
+                    var persons = (IEnumerable<Person>)ViewData["persons"];
+                    foreach (var p in persons)
+                    {
+                        <li class="list-group-item">
+                            <span>@Html.ActionLink(" ", "AddTeam", "Manager", new { personId = p.IdPerson, projectId = Model.IdProject }, new { @class = "btn glyphicon glyphicon-plus" })</span>
+                            @(p.firstName + ' ' + p.surName)
+                        </li>
+                }
                     }
                 </ul>
             </p>
         </div>
         <div class="tab-content" id="works-content">
             <h2>Работы по проекту</h2>
-     
+
             @Html.Partial("GetWorksTree", (TreeViewModel<Project>)ViewData["treeView"])
             <h3>@Html.ActionLink("Добавить работу", "AddWork", "Manager", new { projectId = Model.IdProject }, new { @class = "glyphicon glyphicon-plus" })</h3>
 
@@ -113,35 +116,38 @@
                 </tr>
 
                 @{
-            var works = (IEnumerable<Team>)ViewData["works"];
-            foreach (var w in works)
-            {
-                <tr>
-                    <th>@("Работа: " + w.Project.projectName)</th>
-                    <th>@w.Project.startDateTime.ToShortDateString()</th>
-                    <th>@w.Project.endDateTime.ToShortDateString()</th>
-                    <th>@(w.Person.firstName + ' ' + w.Person.surName)</th>
-                    @if (!w.Project.isDone)
-            {
-                <th>В работе</th>}
-                    @if (w.Project.isDone && !w.Project.isClose)
-            {
-                <th>Завершён</th>}
-                    @if (w.Project.isClose)
-            {
-                <th>Закрыт</th>}
-                    <th>@Html.ActionLink("Подробнее", "Work", "Manager", new { projectId = w.Project.IdProject }, new { @class = "btn" })</th>
-                    <th>@Html.ActionLink(" ", "DeleteWork", "Manager", new { workId = w.Project.IdProject, projectId = Model.IdProject }, new { @class = "btn glyphicon glyphicon-remove" })</th>
-                </tr>
-    }
+                    var works = (IEnumerable<Team>)ViewData["works"];
+                    foreach (var w in works)
+                    {
+                        <tr>
+                            <th>@("Работа: " + w.Project.projectName)</th>
+                            <th>@w.Project.startDateTime.ToShortDateString()</th>
+                            <th>@w.Project.endDateTime.ToShortDateString()</th>
+                            <th>@(w.Person.firstName + ' ' + w.Person.surName)</th>
+                            @if (!w.Project.isDone)
+                            {
+                                <th>В работе</th>}
+                            @if (w.Project.isDone && !w.Project.isClose)
+                            {
+                                <th>Завершён</th>}
+                            @if (w.Project.isClose)
+                            {
+                                <th>Закрыт</th>}
+                            <th>@Html.ActionLink("Подробнее", "Work", "Manager", new { projectId = w.Project.IdProject }, new { @class = "btn" })</th>
+                            <th>@Html.ActionLink(" ", "DeleteWork", "Manager", new { workId = w.Project.IdProject, projectId = Model.IdProject }, new { @class = "btn glyphicon glyphicon-remove" })</th>
+                        </tr>
+                    }
                 }
             </table>
+        </div>
+        <div id="report-content" class="tab-content">
+            @{ Html.RenderPartial("Report", new ManagerReportViewModel(@Model));}
         </div>
 
         <p>
             <input class="btn btn-default" type="submit" value="Сохранить изменения" onclick="return checkLastWork(endOfLastWork.value, length.value, length.max);">
         </p>
-    }
-</div>
+}
+    </div>
 </body>
 </html>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
 using System.Web;
 
@@ -227,6 +228,46 @@ namespace SMP.Models.Repositoryes
         public Project GetInnerProject(int childId)
         {
             return GetInnerProject(GetProjectById(childId));
+        }
+
+        /// <summary>
+        /// Возвращает список дочерних работ самых нижних уровней.
+        /// </summary>
+        /// <param name="p">Проект-родитель.</param>
+        /// <returns></returns>
+        public List<Project> GetLowestWorks(Project p)
+        {
+            var res = new List<Project>();
+            if (p == null)
+            {
+                return res;
+            }
+
+            return GetLowestRec(new List<Project> {p});
+        }
+
+        /// <summary>
+        /// Рекурсивно получает список самых нижних работ.
+        /// </summary>
+        /// <param name="parents">Список проектов-родителей.</param>
+        /// <returns></returns>
+        private List<Project> GetLowestRec(List<Project> parents)
+        {
+            var res = new List<Project>();
+            foreach (var parrent in parents)
+            {
+                var children = GetProjectsByParrentId(parrent.IdProject);
+                if (children.Any())
+                {
+                    res.AddRange(GetLowestRec(children));
+                }
+                else
+                {
+                    res.Add(parrent);
+                }
+            }
+
+            return res;
         }
     }
 }
