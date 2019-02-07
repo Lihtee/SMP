@@ -78,6 +78,11 @@ namespace SMP.Models.Repositoryes
                 cont.Addiction.Remove(a);
             }
 
+            foreach (var a in cont.Addiction.Where(addiction => addiction.lastProject.IdProject == id || addiction.nextProject.IdProject == id).ToList())
+            {
+                cont.Addiction.Remove(a);
+            }
+
             cont.Project.Remove(cont.Project.Find(id));
 
             if (id == startID)

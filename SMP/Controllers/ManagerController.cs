@@ -587,16 +587,12 @@ namespace SMP.Controllers
 
             if (CheckPersonTime(start, end, Convert.ToInt32(personId), id)) ModelState.AddModelError("ProjectLength", "Исполнитель на это время уже занят в другой работе");
 
+            if (CheckPersonTime(start, end, Convert.ToInt32(personId), id)) ModelState.AddModelError("ProjectLength", "Исполнитель на это время уже занят в другой работе");
+
             if (ModelState.IsValid)
             {
                 var p = _DataManager.projectRepository.AddProject(projectName, projectDescription, start, end, 0, 0, id);
                 _DataManager.teamRepository.AddTeam(Convert.ToInt32(personId),p.IdProject);
-
-                foreach (string inlineWorkID in (IEnumerable<string>)selectedInlineWorks)
-                {
-                    _DataManager.addictionRepository.AddAddiction(Convert.ToInt32(projectId), Convert.ToInt32(inlineWorkID));
-                }
-
                 if (p.parrentProject.parrentProject != null) _DataManager.teamRepository.DeleteTeam(_DataManager.teamRepository.GetTeamByWork(p.parrentProject.IdProject).IdTeam);
                
                 //Отправить уведомление на почту исполнителя
