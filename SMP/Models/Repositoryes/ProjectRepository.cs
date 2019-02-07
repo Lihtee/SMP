@@ -60,25 +60,27 @@ namespace SMP.Models.Repositoryes
         /// Удаляет проект/работу по Id
         /// </summary>
         /// <param name="id"></param>
-        public void DeleteProject(int id)
+        public void DeleteProject(int id, int startID)
         {
-            if (cont.Project.Single(p => p.IdProject == id).parrentProject == null)
+            foreach (var p in GetProjectsByParrentId(id))
             {
-                foreach(var p in GetProjectsByParrentId(id))
-                {
-                    DeleteProject(p.IdProject);
-                }
+                DeleteProject(p.IdProject, startID);
             }
 
-            foreach(var t in cont.Team.Where(team => team.Project.IdProject == id).ToList())
+            foreach (var t in cont.Team.Where(team => team.Project.IdProject == id).ToList())
             {
-                if (t.Project.IdProject == id)
-                    cont.Team.Remove(t);
+                cont.Team.Remove(t);
+            }
+
+            foreach (var a in cont.Addiction.Where(addiction => addiction.lastProject.IdProject == id || addiction.nextProject.IdProject == id).ToList())
+            {
+                cont.Addiction.Remove(a);
             }
 
             cont.Project.Remove(cont.Project.Find(id));
 
-            cont.SaveChanges();
+            if (id == startID)
+                cont.SaveChanges();
         }
 
         /// <summary>
