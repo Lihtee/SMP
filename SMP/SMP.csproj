@@ -194,7 +194,6 @@
     <Compile Include="Models\Project.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Repositoryes\AddictionRepository.cs" />
     <Compile Include="Models\Repositoryes\PersonRepository.cs" />
     <Compile Include="Models\Repositoryes\ProjectRepository.cs" />
     <Compile Include="Models\Repositoryes\TeamRepository.cs" />

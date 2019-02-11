@@ -12,7 +12,6 @@ namespace SMP.Models
         public PersonRepository personRepository;
         public ProjectRepository projectRepository;
         public TeamRepository teamRepository;
-        public AddictionRepository addictionRepository;
 
         public DataManager()
         {
@@ -20,7 +19,6 @@ namespace SMP.Models
             personRepository = new PersonRepository(cont);
             projectRepository = new ProjectRepository(cont);
             teamRepository = new TeamRepository(cont);
-            addictionRepository = new AddictionRepository(cont);
         }
     }
 }
