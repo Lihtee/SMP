@@ -34,17 +34,6 @@ namespace SMP.Models.Repositoryes
         }
 
         /// <summary>
-        /// Возвращает зависимость по Id проектов
-        /// </summary>
-        /// <param name="lastProjectId">Id предшествующего проекта</param>
-        /// <param name="nextProjectId">Id следующего проекта</param>
-        /// <returns>Зависимость</returns>
-        public Addiction GetAddictionByProjectsId(int lastProjectId, int nextProjectId)
-        {
-            return cont.Addiction.SingleOrDefault(p => p.lastProject.IdProject == lastProjectId && p.nextProject.IdProject == nextProjectId);
-        }
-
-        /// <summary>
         /// Возвращает зависимость по Id предшествующего проекта
         /// </summary>
         /// <param name="Id">Id предшествующего проекта</param>

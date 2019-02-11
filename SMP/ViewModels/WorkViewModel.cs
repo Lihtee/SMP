@@ -28,12 +28,8 @@ namespace SMP.ViewModels
                 if (p.IdProject != idProject)
                 {
                     inlineWorks.Add(new Item(p.IdProject, p.projectName));
+                    selectedValues.Add(p.IdProject);
                 }
-            }
-            var addictionRepository = new AddictionRepository(model);
-            foreach (Addiction a in addictionRepository.GetAddictionsByNextProjectID(idProject))
-            {
-                selectedValues.Add(a.lastProject.IdProject);
             }
         }
     }
