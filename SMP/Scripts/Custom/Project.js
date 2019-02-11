@@ -27,8 +27,9 @@ function OnTabClick() {
  */
 function ActivateTab(tabBtnId, tabContentId) {
     var activeClass = 'active';
-    $('.tab-button, .tab-content').removeClass(activeClass);
+    $('.nav-link.active, .tab-content.active').removeClass(activeClass);
     $('#' + tabBtnId + ',#' + tabContentId).addClass(activeClass);
+    return false;
 }
 
 function OnDocLoad() {

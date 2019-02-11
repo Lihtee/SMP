@@ -2,8 +2,18 @@
  * Срабатывает при клике на экспандер дерева.
  */
 function OnExpanderClick() {
-    $('.expander').click(function() {
-        ShowHide($(event.target).closest('.tree-node'), true);
+    $('.expander').click(function () {
+        var $expander = $(event.target);
+        var $node = $expander.closest('.tree-node');
+        ShowHide($node, true);
+        if ($node.hasClass('expanded')) {
+            $expander.removeClass('glyphicon-chevron-down');
+            $expander.addClass('glyphicon-chevron-up');
+        } else {
+            $expander.addClass('glyphicon-chevron-down');
+            $expander.removeClass('glyphicon-chevron-up');
+        }
+        
     });
 }
 
@@ -16,10 +26,10 @@ function ShowHide($node, root) {
     // Если находимся в root, то делаем его закрытым и прячем все дочерние узлы. 
     if (root) {
     if ($node.hasClass('expanded')) {
-            $node.removeClass('expanded');
+        $node.removeClass('expanded');
             $children.addClass('hidden');
         } else {
-            $node.addClass('expanded');
+        $node.addClass('expanded');
             $children.removeClass('hidden');
         }
     } else {
@@ -33,7 +43,7 @@ function ShowHide($node, root) {
     }
     
     $children.each(function(ind, $el) {
-        ShowHide($el, false);
+        ShowHide($($el), false);
     });
 
     

@@ -22,19 +22,21 @@
     {
         @Html.AntiForgeryToken()
         @Html.Hidden("projectId", Model.IdProject)
-
-        <div class="tab-button active" id="project-info-btn">
-            Информация о проекте
-        </div>
-        <div class="tab-button" id="team-btn">
-            Команда
-        </div>
-        <div class="tab-button" id="works-btn">
-            Работы
-        </div>
-        <div class="tab-button" id="report-btn">
-            Отчет о ходе проекта
-        </div>
+        <ul class="nav nav-tabs noselect">
+            <li class="nav-item">
+                <a class="nav-link active" id="project-info-btn">Информация о проекте</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="team-btn">Команда</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="works-btn">Работы</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="report-btn">Отчет о ходе проекта</a>
+            </li>
+        </ul>
+        
         <div class="tab-content active" id="project-info-content">
             <p class="input-group">
                 <span class="input-group-addon" id="Firm">Название:</span>

@@ -22,57 +22,61 @@
 @*Нехорошо объявлять тут функции, но так быстрее и проще.*@
 
 @helper PrintRecursively(TreeViewNode<Project> root, int level = 1, string parentId = "", int curId = 1)
-{
-    var hasChilds = root.NextLevelElements?.Count > 0;
-    var sId = string.IsNullOrEmpty(parentId)
-        ? curId.ToString()
-        : $"{parentId}-{curId}";
-    var indentLevel = sId.Split('-').Length;
-    var singleIndent = 18;
-    var status = "В работе";
-    string hidden = level == 1
-        ? ""
-        : "hidden";
-
-    if (root.Element.isClose)
     {
-        status = "Закрыт";
-    }
-    else if (root.Element.isDone)
-    {
-        status = "Завершен";
-    }
+        var hasChilds = root.NextLevelElements?.Count > 0;
+        var sId = string.IsNullOrEmpty(parentId)
+            ? curId.ToString()
+            : $"{parentId}-{curId}";
+        var indentLevel = sId.Split('-').Length;
+        var singleIndent = 18;
+        var status = "В работе";
+        string hidden = level == 1
+            ? ""
+            : "hidden";
 
-    <tr id="@sId" pId="@parentId" class="tree-node @hidden">
-        <td class="tree-td">
-            @if (hasChilds)
-            {
-                var caretIndentPower = $"{singleIndent}px";
-                <span class="expander" style="min-width: @caretIndentPower;">+</span>
-                indentLevel--;
-            }
-
-            @{
-                var indentPower = $"{indentLevel * singleIndent}px";
-                <span class="indent" style="padding-left: @indentPower">
-
-                </span>
-            }
-            <span>@Html.ActionLink(root.Element.projectName, "Work", "Manager", new {projectId = root.Element.IdProject}, new {@class = "btn"})</span>
-        </td>
-        <td>@root.Element.startDateTime.ToShortDateString()</td>
-        <td>@root.Element.endDateTime.ToShortDateString()</td>
-        <td>@status</td>
-        <th>@Html.ActionLink(" ", "DelWork", "Manager", new {workId = root.Element.IdProject}, new {@class = "btn glyphicon glyphicon-remove"})</th>
-    </tr>
-    if (hasChilds)
-    {
-        var nexId = 1;
-        foreach (var newRoot in root.NextLevelElements)
+        if (root.Element.isClose)
         {
-            @PrintRecursively(newRoot, level + 1, sId, nexId)
-            ;
-            nexId++;
+            status = "Закрыт";
         }
-    }
+        else if (root.Element.isDone)
+        {
+            status = "Завершен";
+        }
+
+        <tr id="@sId" pId="@parentId" class="tree-node @hidden">
+            <td class="tree-td">
+                @{
+                    if (hasChilds)
+                    {
+                        indentLevel--;
+                    }
+
+                    var indentPower = $"{indentLevel * singleIndent}px";
+                    <span class="indent noselect" style="padding-left: @indentPower">
+                    </span>
+
+                    if (hasChilds)
+                    {
+                        <span class="expander noselect glyphicon glyphicon-chevron-down"></span>
+                    }
+                }
+
+
+                <span>@Html.ActionLink(root.Element.projectName, "Work", "Manager", new { projectId = root.Element.IdProject }, new { @class = "btn" })</span>
+            </td>
+            <td>@root.Element.startDateTime.ToShortDateString()</td>
+            <td>@root.Element.endDateTime.ToShortDateString()</td>
+            <td>@status</td>
+            <th>@Html.ActionLink(" ", "DelWork", "Manager", new { workId = root.Element.IdProject }, new { @class = "btn glyphicon glyphicon-remove" })</th>
+        </tr>
+        if (hasChilds)
+        {
+            var nexId = 1;
+            foreach (var newRoot in root.NextLevelElements)
+            {
+                @PrintRecursively(newRoot, level + 1, sId, nexId)
+                ;
+                nexId++;
+            }
+        }
 }

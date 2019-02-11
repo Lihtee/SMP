@@ -1,15 +1,28 @@
-﻿.tab-button {
-    display: inline-block;
+﻿.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
-.tab-button.active {
-    border-top: 1px solid black;
-    border-right: 1px solid black;
-    border-left: 1px solid black;
+.nav-tabs>li>a.nav-link.active {
+    border-width: 1px;
+    border-color: #dddddd;
+}
+
+.nav-tabs > li > a.nav-link {
+    cursor: pointer;
+}
+.expander:hover {
+    cursor: pointer;
 }
 
 .tab-content {
     display: none;
+    margin: 3px;
+    border-radius: 4px;
 }
 
 .tab-content.active {

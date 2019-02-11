@@ -34,91 +34,92 @@
                 </h3>
             }
         </p>
+    </div>
 
-        @using (Html.BeginForm())
-        {
-            @Html.AntiForgeryToken()
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
 
-            @Html.Hidden("projectId", Model.IdProject)
+        @Html.Hidden("projectId", Model.IdProject)
 
-            <p class="input-group">
-                <span class="input-group-addon" id="Firm">Название:</span>
-                <input type="text" class="form-control" name="projectName" placeholder="Название" value=@Model.projectName>
-                @Html.ValidationMessage("ProjectName")
-            </p>
+        <p class="input-group">
+            <span class="input-group-addon" id="Firm">Название:</span>
+            <input type="text" class="form-control" name="projectName" placeholder="Название" value=@Model.projectName>
+            @Html.ValidationMessage("ProjectName")
+        </p>
 
-            <p class="input-group">
-                <span class="input-group-addon" id="Firm">Длительность</span>
-                <span class="input-group-addon" id="Firm">С:</span>
-                <input type="datetime" class="form-control" name="projectStart" placeholder="Начало" value=@Model.startDateTime.ToShortDateString()>
-                <span class="input-group-addon" id="Firm">По:</span>
-                <input type="datetime" class="form-control" name="projectEnd" placeholder="Конец" value=@Model.endDateTime.ToShortDateString()>
-                @Html.ValidationMessage("ProjectLength")
-            </p>
+        <p class="input-group">
+            <span class="input-group-addon" id="Firm">Длительность</span>
+            <span class="input-group-addon" id="Firm">С:</span>
+            <input type="datetime" class="form-control" name="projectStart" placeholder="Начало" value=@Model.startDateTime.ToShortDateString()>
+            <span class="input-group-addon" id="Firm">По:</span>
+            <input type="datetime" class="form-control" name="projectEnd" placeholder="Конец" value=@Model.endDateTime.ToShortDateString()>
+            @Html.ValidationMessage("ProjectLength")
+        </p>
 
-            <p class="input-group">
-                <span class="input-group-addon" id="Firm">Описание</span>
-                <textarea id="TextArea1" rows="10" cols="60" class="form-control" name="projectDescription">@Model.description</textarea>
-            </p>
+        <p class="input-group">
+            <span class="input-group-addon" id="Firm">Описание</span>
+            <textarea id="TextArea1" rows="10" cols="60" class="form-control" name="projectDescription">@Model.description</textarea>
+        </p>
 
-            <h4 class="right">Исполнитель</h4>
+        <h4 class="right">Исполнитель</h4>
 
-            <div class="input-group">
+        <div class="input-group">
 
-                @Html.DropDownList("team", (IEnumerable<SelectListItem>)ViewData["Team"], htmlAttributes: new { @class = "form-control" })
-            </div>
+            @Html.DropDownList("team", (IEnumerable<SelectListItem>)ViewData["Team"], htmlAttributes: new { @class = "form-control" })
+        </div>
 
-            <h4 class="right">Подработы:</h4>
+        <h4 class="right">Подработы:</h4>
 
-            <h4>@Html.ActionLink("Добавить работу", "AddWork", "Manager", new { projectId = Model.IdProject }, new { @class = "glyphicon glyphicon-plus" })</h4>
+        <h4>@Html.ActionLink("Добавить работу", "AddWork", "Manager", new { projectId = Model.IdProject }, new { @class = "glyphicon glyphicon-plus" })</h4>
 
-            <table class="table table-bordered">
-                <tr>
-                    <th>Название</th>
-                    <th>С</th>
-                    <th>По</th>
-                    <th>Исполнитель</th>
-                    <th>Статус</th>
-                    <th></th>
-                    <th></th>
-                </tr>
+        <table class="table table-bordered">
+            <tr>
+                <th>Название</th>
+                <th>С</th>
+                <th>По</th>
+                <th>Исполнитель</th>
+                <th>Статус</th>
+                <th></th>
+                <th></th>
+            </tr>
 
-                @{
-                    var works = (IEnumerable<Team>)ViewData["works"];
-                    foreach (var w in works)
-                    {
-                        <tr>
-                            <th>@("Работа: " + w.Project.projectName)</th>
-                            <th>@w.Project.startDateTime.ToShortDateString()</th>
-                            <th>@w.Project.endDateTime.ToShortDateString()</th>
-                            <th>@(w.Person.firstName + ' ' + w.Person.surName)</th>
-                            @if (!w.Project.isDone)
-                            {
-                                <th>В работе</th>}
-                            @if (w.Project.isDone && !w.Project.isClose)
-                            {
-                                <th>Завершён</th>}
-                            @if (w.Project.isClose)
-                            {
-                                <th>Закрыт</th>}
-                            <th>@Html.ActionLink("Подробнее", "Work", "Manager", new { projectId = w.Project.IdProject }, new { @class = "btn" })</th>
-                            <th>@Html.ActionLink(" ", "DeleteWork", "Manager", new { workId = w.Project.IdProject, projectId = Model.IdProject }, new { @class = "btn glyphicon glyphicon-remove" })</th>
-                        </tr>
-                    }
-                }
-            </table>
-
-            <p>
-                @if (Model.parrentProject.parrentProject == null)
+            @{
+                var works = (IEnumerable<Team>)ViewData["works"];
+                foreach (var w in works)
                 {
-                    @Html.ActionLink("Назад", "Project", "Manager", routeValues: new { idProject = Model.parrentProject.IdProject }, htmlAttributes: new { @class = "btn btn-default" });
+                    <tr>
+                        <th>@("Работа: " + w.Project.projectName)</th>
+                        <th>@w.Project.startDateTime.ToShortDateString()</th>
+                        <th>@w.Project.endDateTime.ToShortDateString()</th>
+                        <th>@(w.Person.firstName + ' ' + w.Person.surName)</th>
+                        @if (!w.Project.isDone)
+                        {
+                            <th>В работе</th>}
+                        @if (w.Project.isDone && !w.Project.isClose)
+                        {
+                            <th>Завершён</th>}
+                        @if (w.Project.isClose)
+                        {
+                            <th>Закрыт</th>}
+                        <th>@Html.ActionLink("Подробнее", "Work", "Manager", new { projectId = w.Project.IdProject }, new { @class = "btn" })</th>
+                        <th>@Html.ActionLink(" ", "DeleteWork", "Manager", new { workId = w.Project.IdProject, projectId = Model.IdProject }, new { @class = "btn glyphicon glyphicon-remove" })</th>
+                    </tr>
                 }
-                else
-                {
-                    @Html.ActionLink("Назад", "Work", "Manager", routeValues: new { projectId = Model.parrentProject.IdProject }, htmlAttributes: new { @class = "btn btn-default" })
-                }
-                <input class="btn btn-default" type="submit" value="Сохранить">
-            </p>
-                    }
+            }
+        </table>
+
+        <p>
+            @if (Model.parrentProject.parrentProject == null)
+            {
+                @Html.ActionLink("Назад", "Project", "Manager", routeValues: new { idProject = Model.parrentProject.IdProject }, htmlAttributes: new { @class = "btn btn-default" });
+            }
+            else
+            {
+                @Html.ActionLink("Назад", "Work", "Manager", routeValues: new { projectId = Model.parrentProject.IdProject }, htmlAttributes: new { @class = "btn btn-default" })
+            }
+            <input class="btn btn-default" type="submit" value="Сохранить">
+        </p>
+    }
 </body>
 </html>
