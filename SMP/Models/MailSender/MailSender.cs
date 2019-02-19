@@ -26,25 +26,33 @@ namespace SMP.Models.MailSender
 
         public bool Send(MailTemplate template)
         {
-            var message = template.GetHTMLtext();
-            message.Sender = new MailAddress(systemEmail, systemName);
-            message.From = message.Sender;
-            using (SmtpClient smtp = new SmtpClient(SMTPadress, SMTPport))
+            // Пока обернем в такую проверку.
+            try
             {
-                // логин и пароль
-                smtp.Credentials = new NetworkCredential(systemEmail, systemPass);
-                smtp.EnableSsl = true;
-                try
+                var message = template.GetHTMLtext();
+                message.Sender = new MailAddress(systemEmail, systemName);
+                message.From = message.Sender;
+                using (SmtpClient smtp = new SmtpClient(SMTPadress, SMTPport))
                 {
-                    smtp.Send(message);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    return false;
+                    // логин и пароль
+                    smtp.Credentials = new NetworkCredential(systemEmail, systemPass);
+                    smtp.EnableSsl = true;
+                    try
+                    {
+                        smtp.Send(message);
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        return false;
+                    }
                 }
             }
-            return true;
+            catch (Exception)
+            {
+                return false;
+            }
+            
 
         }
         

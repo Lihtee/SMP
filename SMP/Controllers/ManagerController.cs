@@ -373,7 +373,7 @@ namespace SMP.Controllers
         private void GetTeam(int idProject)
         {
             SortedList<int, string> sl = new SortedList<int, string>();
-            foreach (Team t in _DataManager.teamRepository.GetTeamsByProject(_DataManager.projectRepository.GetProjectById(idProject).parrentProject.IdProject))
+            foreach (Team t in _DataManager.teamRepository.GetTeamsByProject(idProject))
             {
                 if (t.Person.Position == Position.Исполнитель)
                     sl.Add(t.Person.IdPerson, t.Person.firstName + ' ' + t.Person.surName);
@@ -422,7 +422,7 @@ namespace SMP.Controllers
         }
         //team - это не айди команды, а айди персоны.
         [HttpPost]
-        public ActionResult Work(string projectId, string projectName, string projectStart, string projectEnd, string projectDescription, int team, string submit)
+        public ActionResult Work(string projectId, string projectName, string projectStart, string projectEnd, string projectDescription, int? team, string submit)
         {
             if (string.IsNullOrWhiteSpace(projectName))
                 ModelState.AddModelError("ProjectName", "Навание проекта не может быть пустым");
@@ -467,13 +467,16 @@ namespace SMP.Controllers
                 //GetWorks(id);
 
                 //Отправить уведомление об изменинии в работе
-                MailSender sender = new MailSender();
-                string email = _DataManager.personRepository.GetPersonById(team).email;
-                var work = _DataManager.projectRepository.GetProjectById(id);
-                //sender.SendChangeWork(email, work);
-                sender.Send(new WorkChangedMail(email, work));
+                if (team != null)
+                {
+                    MailSender sender = new MailSender();
+                    string email = _DataManager.personRepository.GetPersonById(team.Value).email;
+                    var work = _DataManager.projectRepository.GetProjectById(id);
+                    //sender.SendChangeWork(email, work);
+                    sender.Send(new WorkChangedMail(email, work)); 
+                }
 
-                if (p.parrentProject == null)
+                if (p.parrentProject?.parrentProject == null)
                     return RedirectToAction("Project", new { idProject = p.parrentProject.IdProject });
                 else
                     return RedirectToAction("Work", new { projectId = p.parrentProject.IdProject });
@@ -552,7 +555,8 @@ namespace SMP.Controllers
             {
                 var p = _DataManager.projectRepository.AddProject(projectName, projectDescription, start, end, 0, 0, id);
                 _DataManager.teamRepository.AddTeam(Convert.ToInt32(personId),p.IdProject);
-                if (p.parrentProject.parrentProject != null) _DataManager.teamRepository.DeleteTeam(_DataManager.teamRepository.GetTeamByWork(p.parrentProject.IdProject).IdTeam);
+                if (p.parrentProject.parrentProject != null)
+                    _DataManager.teamRepository.DeleteTeam(_DataManager.teamRepository.GetTeamByWork(p.parrentProject.IdProject)?.IdTeam);
                
                 //Отправить уведомление на почту исполнителя
                 var mailSender = new MailSender();

@@ -110,7 +110,7 @@
         </table>
 
         <p>
-            @if (Model.parrentProject.parrentProject == null)
+            @if (Model.parrentProject?.parrentProject == null)
             {
                 @Html.ActionLink("Назад", "Project", "Manager", routeValues: new { idProject = Model.parrentProject.IdProject }, htmlAttributes: new { @class = "btn btn-default" });
             }

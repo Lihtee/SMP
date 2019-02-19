@@ -123,10 +123,13 @@ namespace SMP.Models.Repositoryes
         /// Удаляет команду из базы
         /// </summary>
         /// <param name="teamId">Id команды</param>
-        public void DeleteTeam(int teamId)
+        public void DeleteTeam(int? teamId)
         {
-            cont.Team.Remove(GetTeamById(teamId));
-            cont.SaveChanges();
+            if (teamId != null)
+            {
+                cont.Team.Remove(GetTeamById(teamId.Value));
+                cont.SaveChanges(); 
+            }
         }
     }
 }
