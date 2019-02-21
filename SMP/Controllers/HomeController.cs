@@ -18,6 +18,17 @@ namespace SMP.Controllers
 
         public ActionResult Index()
         {
+            if (((Person)Session["user"]) != null)
+            {
+                if (((Person)Session["user"]).Position == Position.Менеджер)
+                {
+                    return RedirectToAction("Projects", "Manager");
+                }
+                if (((Person)Session["user"]).Position == Position.Исполнитель)
+                {
+                    return RedirectToAction("Index", "Executer");
+                }
+            }
             return View();
         }
 

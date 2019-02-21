@@ -62,6 +62,7 @@
 
                 <p class="input-group">
                     @Html.DropDownList("personId", (IEnumerable<SelectListItem>)ViewData["Team"], htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessage("PersonId")
                 </p>
 
                 <p>

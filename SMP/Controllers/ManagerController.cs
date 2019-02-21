@@ -425,7 +425,7 @@ namespace SMP.Controllers
         public ActionResult Work(string projectId, string projectName, string projectStart, string projectEnd, string projectDescription, int? team, string submit)
         {
             if (string.IsNullOrWhiteSpace(projectName))
-                ModelState.AddModelError("ProjectName", "Навание проекта не может быть пустым");
+                ModelState.AddModelError("ProjectName", "Навание работы не может быть пустым");
 
             if (string.IsNullOrWhiteSpace(projectStart))
                 ModelState.AddModelError("ProjectStart", "Дата начала не может быть пустой");
@@ -459,6 +459,13 @@ namespace SMP.Controllers
             }
 
             int id = Convert.ToInt32(projectId);
+            Project project = _DataManager.projectRepository.GetProjectById(id).parrentProject;
+            if (start < project.startDateTime || start > project.endDateTime ||
+                end < project.startDateTime || end > project.endDateTime)
+            {
+                ModelState.AddModelError("ProjectLength", "Начало или конец работы выходят за пределы проекта");
+            }
+
             if (ModelState.IsValid)
             {
                 Project p = _DataManager.projectRepository.EditProject(id, projectName, projectDescription, start, end, 0, 0);
@@ -469,6 +476,8 @@ namespace SMP.Controllers
                 //Отправить уведомление об изменинии в работе
                 if (team != null)
                 {
+                    _DataManager.teamRepository.DeleteTeam(_DataManager.teamRepository.GetTeamByWork(id).IdTeam);
+                    _DataManager.teamRepository.AddTeam(team.Value, id);
                     MailSender sender = new MailSender();
                     string email = _DataManager.personRepository.GetPersonById(team.Value).email;
                     var work = _DataManager.projectRepository.GetProjectById(id);
@@ -503,10 +512,10 @@ namespace SMP.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddWork(string projectId, string projectName, string projectStart, string projectEnd, string projectDescription, int personId, string submit)
+        public ActionResult AddWork(string projectId, string projectName, string projectStart, string projectEnd, string projectDescription, int? personId, string submit)
         {
             if (string.IsNullOrWhiteSpace(projectName))
-                ModelState.AddModelError("ProjectName", "Навание проекта не может быть пустым");
+                ModelState.AddModelError("ProjectName", "Навание работы не может быть пустым");
 
             if (string.IsNullOrWhiteSpace(projectStart))
                 ModelState.AddModelError("ProjectStart", "Дата начала не может быть пустой");
@@ -549,18 +558,18 @@ namespace SMP.Controllers
 
             if (CheckPersonTime(start, end, Convert.ToInt32(personId), id)) ModelState.AddModelError("ProjectLength", "Исполнитель на это время уже занят в другой работе");
 
-            if (CheckPersonTime(start, end, Convert.ToInt32(personId), id)) ModelState.AddModelError("ProjectLength", "Исполнитель на это время уже занят в другой работе");
+            if (!personId.HasValue) ModelState.AddModelError("PersonId", "Исполнитель не выбран");
 
             if (ModelState.IsValid)
             {
                 var p = _DataManager.projectRepository.AddProject(projectName, projectDescription, start, end, 0, 0, id);
-                _DataManager.teamRepository.AddTeam(Convert.ToInt32(personId),p.IdProject);
+                _DataManager.teamRepository.AddTeam(Convert.ToInt32(personId.Value),p.IdProject);
                 if (p.parrentProject.parrentProject != null)
                     _DataManager.teamRepository.DeleteTeam(_DataManager.teamRepository.GetTeamByWork(p.parrentProject.IdProject)?.IdTeam);
                
                 //Отправить уведомление на почту исполнителя
                 var mailSender = new MailSender();
-                string personMail = _DataManager.personRepository.GetPersonById(personId).email;
+                string personMail = _DataManager.personRepository.GetPersonById(personId.Value).email;
                 mailSender.Send(new NewWorkTemplate(personMail, p));
 
                 if (p.parrentProject == null)
