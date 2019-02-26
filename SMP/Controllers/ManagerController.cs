@@ -45,21 +45,6 @@ namespace SMP.Controllers
         public ActionResult Projects()
         {
             if (!AccessControll()) return RedirectToAction("AccesError");
-            //List<Project> projects = new List<Project>();
-
-            //projects.AddRange(
-            //    _DataManager.teamRepository.GetTeamsByPerson(((Person)Session["user"]).IdPerson)
-            //    .Where(team => team.Project.parrentProject == null)
-            //    .Select(team => team.Project)
-            //    .OrderBy(p => p.endDateTime));
-
-            //foreach (var t in _DataManager.teamRepository.GetTeamsByPerson(((Person)Session["user"]).IdPerson).Where(team => team.Project.parrentProject == null))
-            //{
-            //    if (t.Project.parrentProject == null)
-            //        projects.Add(t.Project);
-            //}
-
-            //ViewData["projects"] = projects;
             ViewData["projects"] =
                 _DataManager.teamRepository.GetTeamsByPerson(((Person) Session["user"]).IdPerson)
                     .Where(team => team.Project.parrentProject == null)
@@ -86,8 +71,8 @@ namespace SMP.Controllers
             if (!AccessControll()) return RedirectToAction("AccesError");
 
             GetProject(idProject);
-            GetPersons(idProject);
-            GetWorks(idProject);
+            GetExecutors(idProject);
+            GetTeams(idProject);
             GetTreeView(idProject);
 
             Project p = (Project) ViewData.Model;
@@ -98,9 +83,9 @@ namespace SMP.Controllers
 
             ViewData["Length"] = (p.endDateTime - p.startDateTime).Days / 2;
 
-            if (((IEnumerable<Team>) ViewData["works"]).Count() != 0)
+            if (((IEnumerable<Team>) ViewData["teams"]).Count() != 0)
                 ViewData["endOfLastWork"] =
-                    (p.endDateTime - ((IEnumerable<Team>) ViewData["works"]).Last().Project.endDateTime).Days;
+                    (p.endDateTime - ((IEnumerable<Team>) ViewData["teams"]).Last().Project.endDateTime).Days;
             else
                 ViewData["endOfLastWork"] = (p.endDateTime - p.startDateTime).Days;
 
@@ -151,15 +136,15 @@ namespace SMP.Controllers
             {
                 _DataManager.projectRepository.EditProject(id, projectName, projectDescription, start, end, 0, length);
                 GetProject(id);
-                GetPersons(id);
-                GetWorks(id);
+                GetExecutors(id);
+                GetTeams(id);
                 GetTreeView(id);
                 return RedirectToAction("Project", new {idProject = id});
             }
 
             GetProject(id);
-            GetPersons(id);
-            GetWorks(id);
+            GetExecutors(id);
+            GetTeams(id);
             GetTreeView(id);
 
             return View();
@@ -181,16 +166,6 @@ namespace SMP.Controllers
 
         public ActionResult DeleteWork(int workId, int projectId)
         {
-            //Достаем работу и емейл персоны.
-            var work = _DataManager.projectRepository.GetProjectById(workId);
-            var team = _DataManager.teamRepository.GetTeamByWork(workId);
-            string email = team.Person.email;
-
-            //Отправить уведомление об отмене работы.
-            MailSender sender = new MailSender();
-            //sender.SendCanceledWork(email, work);
-            sender.Send(new WordCanceledMail(email, work));
-
             _DataManager.projectRepository.DeleteProject(workId, workId);
             return RedirectToAction("Project", new {idProject = projectId});
         }
@@ -295,7 +270,7 @@ namespace SMP.Controllers
             if (!AccessControll()) return RedirectToAction("AccesError");
 
             GetProject(projectId);
-            GetPersons(projectId);
+            GetExecutors(projectId);
 
             return View();
         }
@@ -321,7 +296,7 @@ namespace SMP.Controllers
             ViewData.Model = _DataManager.projectRepository.GetProjectById(idProject);
         }
 
-        private void GetPersons(int idProject)
+        private void GetExecutors(int idProject)
         {
             List<Team> teams = new List<Team>();
             foreach (var t in _DataManager.teamRepository.GetTeamsByProject(idProject))
@@ -343,9 +318,9 @@ namespace SMP.Controllers
             ViewData["persons"] = persons;
         }
 
-        private void GetWorks(int idProject)
+        private void GetTeams(int idProject)
         {
-            ViewData["works"] = _DataManager.teamRepository.GetTeamsByParrentProject(idProject)
+            ViewData["teams"] = _DataManager.teamRepository.GetTeamsByProject(idProject)
                 .OrderBy(w => w.Project.endDateTime);
         }
 
@@ -357,23 +332,15 @@ namespace SMP.Controllers
                 x => _DataManager.projectRepository.GetProjectsByParrentId(x.IdProject).ToList());
         }
 
-        private void GetPath(int idProject)
-        {
-            List<Project> path = new List<Project>();
-            Project project = _DataManager.projectRepository.GetProjectById(idProject);
-            do
-            {
-                path.Add(project);
-                project = project.parrentProject;
-            } while (project != null);
-            path.Reverse();
-            ViewData["path"] = path;
-        }
-
+        /// <summary>
+        /// Записывает во ViewData список каких-то команд. Предположительно - список команд главного проекта. 
+        /// </summary>
+        /// <param name="idProject"></param>
         private void GetTeam(int idProject)
         {
             SortedList<int, string> sl = new SortedList<int, string>();
-            foreach (Team t in _DataManager.teamRepository.GetTeamsByProject(idProject))
+            var innerProject = _DataManager.projectRepository.GetInnerProject(idProject);
+            foreach (Team t in _DataManager.teamRepository.GetTeamsByProject(innerProject.IdProject))
             {
                 if (t.Person.Position == Position.Исполнитель)
                     sl.Add(t.Person.IdPerson, t.Person.firstName + ' ' + t.Person.surName);
@@ -381,6 +348,10 @@ namespace SMP.Controllers
             ViewData["Team"] = new SelectList(sl, "Key", "Value");
         }
 
+        /// <summary>
+        ///  Записывает во ViewData список команд главного проекта.
+        /// </summary>
+        /// <param name="idProject"></param>
         private void GetMainTeams(int idProject)
         {
             SortedList<int, string> sl = new SortedList<int, string>();
@@ -392,6 +363,14 @@ namespace SMP.Controllers
             ViewData["Team"] = new SelectList(sl, "Key", "Value");
         }
 
+        /// <summary>
+        ///  Проверяет, занята ли персона в указанный период времени.
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="personId"></param>
+        /// <param name="parrentID"></param>
+        /// <returns></returns>
         private bool CheckPersonTime(DateTime start, DateTime end, int personId, int parrentID)
         {
             List<Project> works = (from p in _DataManager.projectRepository.GetProjectsByPersonId(personId)
@@ -413,13 +392,11 @@ namespace SMP.Controllers
         {
             if (!AccessControll()) return RedirectToAction("AccesError");
 
-            GetWorks(projectId);
-            GetProject(projectId);
-            GetPath(projectId);
-            GetTeam(projectId);
+            var vm = new WorkWievModel(projectId);
 
-            return View();
+            return View(vm);
         }
+
         //team - это не айди команды, а айди персоны.
         [HttpPost]
         public ActionResult Work(string projectId, string projectName, string projectStart, string projectEnd, string projectDescription, int? team, string submit)
@@ -469,9 +446,6 @@ namespace SMP.Controllers
             if (ModelState.IsValid)
             {
                 Project p = _DataManager.projectRepository.EditProject(id, projectName, projectDescription, start, end, 0, 0);
-                //GetProject(id);
-                //GetPersons(id);
-                //GetWorks(id);
 
                 //Отправить уведомление об изменинии в работе
                 if (team != null)
@@ -481,7 +455,6 @@ namespace SMP.Controllers
                     MailSender sender = new MailSender();
                     string email = _DataManager.personRepository.GetPersonById(team.Value).email;
                     var work = _DataManager.projectRepository.GetProjectById(id);
-                    //sender.SendChangeWork(email, work);
                     sender.Send(new WorkChangedMail(email, work)); 
                 }
 
@@ -491,12 +464,8 @@ namespace SMP.Controllers
                     return RedirectToAction("Work", new { projectId = p.parrentProject.IdProject });
             }
 
-
-            GetWorks(id);
-            GetProject(id);
-            GetPath(id);
-            GetTeam(id);
-            return View();
+            var vm = new WorkWievModel(project);
+            return View(vm);
         }
 
         [HttpGet]
@@ -504,11 +473,9 @@ namespace SMP.Controllers
         {
             if (!AccessControll()) return RedirectToAction("AccesError");
 
-            GetPath(projectId);
-            GetProject(projectId);
-            GetMainTeams(projectId);
+            var vm = new WorkWievModel(projectId);
 
-            return View();
+            return View(vm);
         }
 
         [HttpPost]
@@ -577,12 +544,9 @@ namespace SMP.Controllers
                 else
                     return RedirectToAction("Work", new { projectId = p.IdProject });
             }
-            
-            GetPath(id);
-            GetProject(id);
-            GetMainTeams(id);
-            //return RedirectToAction("AddWork", new { projectId = id });
-            return View();
+
+            var vm = new WorkWievModel(project);
+            return View(vm);
         }
         #endregion
     }
