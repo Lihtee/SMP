@@ -32,7 +32,8 @@
         {
             @Html.AntiForgeryToken()
 
-            @Html.Hidden("projectId", Model.Work.IdProject)
+            @Html.Hidden("projectId", Model.Parrent?.IdProject ?? Model.Work.IdProject)
+            @Html.Hidden("backUrl", Model.BackUrl)
             
                 <p class="input-group">
                     <span class="input-group-addon" id="Firm">Название:</span>
@@ -62,14 +63,7 @@
                 </p>
 
                 <p>
-                    @if (Model.Work.parrentProject == null)
-                    {
-                        @Html.ActionLink("Назад", "Project", "Manager", routeValues: new { idProject = Model.Work.IdProject }, htmlAttributes: new { @class = "btn btn-default" });
-                    }
-                    else
-                    {
-                        @Html.ActionLink("Назад", "Work", "Manager", routeValues: new { projectId = Model.Work.IdProject }, htmlAttributes: new { @class = "btn btn-default" })
-                    }
+                    <a href="@Model.BackUrl">Назад</a>
                     <input class="btn btn-default" type="submit" value="Сохранить">
                 </p>
         }

@@ -6,10 +6,10 @@
     <p class="lead">@Model.Project.startDateTime.ToShortDateString() - @Model.Project.endDateTime.ToShortDateString()</p>
 </div>
 <div>
-    <p class="lead">Завершено работ @Model.WorksCompleted из @Model.WorksInTotal (@(Model.CompletionRate * 100) %)</p>
+    <p class="lead">Завершено работ @Model.WorksCompleted из @Model.WorksInTotal (@((int)(Model.CompletionRate * 100 + 0.5)) %)</p>
 </div>
 <div>
-    <p class="lead">Резервного времени задействовано (дней): @Model.ReserveDaysUsed из @Model.Project.reserve (@(@Model.ReserveDaysRate * 100) %)</p>
+    <p class="lead">Резервного времени задействовано (дней): @Model.ReserveDaysUsed из @Model.Project.reserve (@((int)(Model.ReserveDaysRate * 100 + 0.5)) %)</p>
 </div>
 <div>
     <p class="lead">Список заверщенных работ самого верхнего уровня:</p>

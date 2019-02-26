@@ -392,7 +392,7 @@ namespace SMP.Controllers
         {
             if (!AccessControll()) return RedirectToAction("AccesError");
 
-            var vm = new WorkWievModel(projectId);
+            var vm = new WorkWievModel(projectId, -1);
 
             return View(vm);
         }
@@ -469,17 +469,17 @@ namespace SMP.Controllers
         }
 
         [HttpGet]
-        public ActionResult AddWork(int projectId)
+        public ActionResult AddWork(int projectId, string backUrl)
         {
             if (!AccessControll()) return RedirectToAction("AccesError");
 
-            var vm = new WorkWievModel(projectId);
+            var vm = new WorkWievModel(-1, projectId, backUrl);
 
             return View(vm);
         }
 
         [HttpPost]
-        public ActionResult AddWork(string projectId, string projectName, string projectStart, string projectEnd, string projectDescription, int? personId, string submit)
+        public ActionResult AddWork(string projectId, string projectName, string projectStart, string projectEnd, string projectDescription, int? personId, string submit, string backUrl)
         {
             if (string.IsNullOrWhiteSpace(projectName))
                 ModelState.AddModelError("ProjectName", "Навание работы не может быть пустым");
@@ -545,7 +545,7 @@ namespace SMP.Controllers
                     return RedirectToAction("Work", new { projectId = p.IdProject });
             }
 
-            var vm = new WorkWievModel(project);
+            var vm = new WorkWievModel(-1, project.IdProject, backUrl);
             return View(vm);
         }
         #endregion

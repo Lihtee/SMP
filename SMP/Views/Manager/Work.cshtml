@@ -69,7 +69,7 @@
 
             <h4 class="right">Подработы:</h4>
 
-            <h4>@Html.ActionLink("Добавить работу", "AddWork", "Manager", new { projectId = Model.Work.IdProject }, new { @class = "glyphicon glyphicon-plus" })</h4>
+            <h4>@Html.ActionLink("Добавить работу", "AddWork", "Manager", new { projectId = Model.Work.IdProject, backUrl = Request.Url.AbsoluteUri }, new { @class = "glyphicon glyphicon-plus" })</h4>
 
             <table class="table table-bordered">
                 <tr>

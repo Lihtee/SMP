@@ -14,21 +14,35 @@ namespace SMP.ViewModels
     {
         private static readonly DataManager dataManager = new DataManager();
 
+        public Project Parrent;
         public Project Work;
         public List<Project> Path;
         public List<WorkTableElement> WorkTableElements;
         public Dictionary<int, string> Executors;
         public int SelectedExecutorID;
+        public string BackUrl;
 
         /// <summary>
         ///     Конструктор.
         /// </summary>
         /// <param name="id">ID работы.</param>
-        public WorkWievModel(int id)
+        /// <param name="backUrl">Куда перейдем, если нажмем "назад".</param>
+        public WorkWievModel(int id, int parrentId, string backUrl = "")
         {
+            // Todo обратная ссылка сейчас работает только для рута AddWork. Добавить такую штуку в рут Work и убрать рут AddWork.
+            // Todo разобраться с параметрами конструкторов, чтобы не указывать лишние и не забыть нужные.
             Work = dataManager.projectRepository.GetProjectById(id);
+
+            // Если не находим работу, то наверное создается новая.
+            if (Work == null)
+            {
+                Parrent = dataManager.projectRepository.GetProjectById(parrentId);
+            }
+
+            BackUrl = backUrl;
             BuildModel();
         }
+
 
         /// <summary>
         ///     Конструктор.
@@ -46,18 +60,9 @@ namespace SMP.ViewModels
         /// </summary>
         private void BuildModel()
         {
-            // Команды главного проекта.
-            var innerTeams = dataManager.teamRepository.GetTeamsOfMainProject(Work.IdProject)
-                .OrderBy(w => w.Project.endDateTime)
-                .ToList();
-
-            // Подработы.
-            var subworks = dataManager.projectRepository.GetProjectsByParrentId(Work.IdProject)
-                .OrderBy(w => w.endDateTime);
-
             // Путь к работе.
             Path = new List<Project>();
-            var workTemp = Work;
+            var workTemp = Work ?? Parrent;
             do
             {
                 Path.Add(workTemp);
@@ -65,6 +70,28 @@ namespace SMP.ViewModels
             } while (workTemp != null);
 
             Path.Reverse();
+
+            // Список исполнителей.
+            Executors = new Dictionary<int, string>();
+            if (!dataManager.projectRepository.GetProjectsByParrentId(Work?.IdProject ?? -1).Any())
+            {
+                var innerTeams = dataManager.teamRepository.GetTeamsOfMainProject(Work?.IdProject ?? Parrent.IdProject);
+                foreach (var t in innerTeams)
+                {
+                    Executors.Add(t.Person.IdPerson, $"{t.Person.firstName} {t.Person.surName}");
+                }
+            }
+
+            // Все остальное - для уже существующей работы.
+            // Todo - можно нормально разбить на методы и конструкторы, или понаследовать ViewModel.
+            if (Work == null)
+            {
+                return;
+            }
+
+            // Подработы.
+            var subworks = dataManager.projectRepository.GetProjectsByParrentId(Work.IdProject)
+                .OrderBy(w => w.endDateTime);
 
             // Таблица подработ.
             WorkTableElements = new List<WorkTableElement>();
@@ -92,22 +119,12 @@ namespace SMP.ViewModels
                 WorkTableElements.Add(workTableElement);
             }
 
-            // Список исполнителей.
-            Executors = new Dictionary<int, string>();
-            if (!dataManager.projectRepository.GetProjectsByParrentId(Work.IdProject).Any())
-            {
-                foreach (var t in innerTeams)
-                {
-                    Executors.Add(t.Person.IdPerson, $"{t.Person.firstName} {t.Person.surName}");
-                } 
-            }
-
-            // Команда текущей работы.
-            var team = dataManager.teamRepository.GetTeamByWork(Work.IdProject);
+            // Выбранный исполнитель.
+            var team = dataManager.teamRepository.GetTeamsByProject(Work.IdProject).ToList();
             SelectedExecutorID = 1;
-            if (team != null)
+            if (team.Count == 1)
             {
-                SelectedExecutorID = team.Person.IdPerson;
+                SelectedExecutorID = team.First().Person.IdPerson;
             }
 
            
