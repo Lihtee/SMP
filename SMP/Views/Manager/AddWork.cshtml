@@ -1,5 +1,4 @@
-﻿@using SMP.Models
-@model SMP.Models.Project
+﻿@model SMP.ViewModels.WorkWievModel
 
 @{
     ViewBag.Title = "AddWork";
@@ -16,17 +15,14 @@
     <div class="panel panel-default">
         <p class="row">
             @{
-                List<Project> path = (List<Project>)ViewData["path"];
-                int i = 1;
                 <h5>
                     @Html.ActionLink("Менеджер - стартовая", "Projects", "Manager")
-                    > @Html.ActionLink("Проект: " + path[0].projectName, "Project", "Manager", routeValues: new { idProject = path[0].IdProject }, htmlAttributes: new { })
-                    @while (i < path.Count)
+                    > @Html.ActionLink("Проект: " + Model.Path[0].projectName, "Project", "Manager", routeValues: new { idProject = Model.Path[0].IdProject }, htmlAttributes: new { })
+                    @for (int i =1; i < Model.Path.Count; i++)
                     {
                         <a>
-                            > @Html.ActionLink("Работа: " + path[i].projectName, "Work", "Manager", routeValues: new { projectId = path[i].IdProject }, htmlAttributes: new { })
+                            > @Html.ActionLink("Работа: " + Model.Path[i].projectName, "Work", "Manager", routeValues: new { projectId = Model.Path[i].IdProject }, htmlAttributes: new { })
                         </a>
-                        i++;
                     }
                 </h5>
             }
@@ -36,7 +32,7 @@
         {
             @Html.AntiForgeryToken()
 
-            @Html.Hidden("projectId", Model.IdProject)
+            @Html.Hidden("projectId", Model.Work.IdProject)
             
                 <p class="input-group">
                     <span class="input-group-addon" id="Firm">Название:</span>
@@ -61,22 +57,22 @@
                 <h4 class="right">Исполнитель</h4>
 
                 <p class="input-group">
-                    @Html.DropDownList("personId", (IEnumerable<SelectListItem>)ViewData["Team"], htmlAttributes: new { @class = "form-control" })
+                    @Html.DropDownList("personId", new SelectList(Model.Executors, "Key", "Value"), htmlAttributes: new { @class = "form-control" })
                     @Html.ValidationMessage("PersonId")
                 </p>
 
                 <p>
-                    @if (Model.parrentProject == null)
+                    @if (Model.Work.parrentProject == null)
                     {
-                        @Html.ActionLink("Назад", "Project", "Manager", routeValues: new { idProject = Model.IdProject }, htmlAttributes: new { @class = "btn btn-default" });
+                        @Html.ActionLink("Назад", "Project", "Manager", routeValues: new { idProject = Model.Work.IdProject }, htmlAttributes: new { @class = "btn btn-default" });
                     }
                     else
                     {
-                        @Html.ActionLink("Назад", "Work", "Manager", routeValues: new { projectId = Model.IdProject }, htmlAttributes: new { @class = "btn btn-default" })
+                        @Html.ActionLink("Назад", "Work", "Manager", routeValues: new { projectId = Model.Work.IdProject }, htmlAttributes: new { @class = "btn btn-default" })
                     }
-                    @*@Html.ActionLink("Назад", "Project", "Manager", routeValues: new { idProject = Model.IdProject }, htmlAttributes: new { @class = "btn btn-default" })*@
                     <input class="btn btn-default" type="submit" value="Сохранить">
                 </p>
         }
+    </div>
 </body>
 </html>

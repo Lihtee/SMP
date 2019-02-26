@@ -40,8 +40,14 @@ namespace SMP
                 personRepository.AddPerson("Менеджер", "Менеджер", "Менеджер",
                 "Manager", "Manager", (int)Position.Менеджер, "", "");
 
+                personRepository.AddPerson("Менеджер2", "Менеджер2", "Менеджер2",
+                    "Manager2", "Manager2", (int)Position.Менеджер, "", "");
+
                 personRepository.AddPerson("Исполнитель", "Исполнитель", "Исполнитель",
                     "User", "User", (int)Position.Исполнитель, "andriocactus@gmail.com", "");
+
+                personRepository.AddPerson("Исполнитель2", "Исполнитель2", "Исполнитель2",
+                    "User2", "User2", (int)Position.Исполнитель, "andriocactus@gmail.com", "");
             }
         }
     }

@@ -106,41 +106,6 @@
             @Html.Partial("GetWorksTree", (TreeViewModel<Project>)ViewData["treeView"])
             <h3>@Html.ActionLink("Добавить работу", "AddWork", "Manager", new { projectId = Model.IdProject }, new { @class = "glyphicon glyphicon-plus" })</h3>
 
-            <table class="table table-bordered">
-                <tr>
-                    <th>Название</th>
-                    <th>С</th>
-                    <th>По</th>
-                    <th>Исполнитель</th>
-                    <th>Статус</th>
-                    <th></th>
-                    <th></th>
-                </tr>
-
-                @{
-                    var works = (IEnumerable<Team>)ViewData["works"];
-                    foreach (var w in works)
-                    {
-                        <tr>
-                            <th>@("Работа: " + w.Project.projectName)</th>
-                            <th>@w.Project.startDateTime.ToShortDateString()</th>
-                            <th>@w.Project.endDateTime.ToShortDateString()</th>
-                            <th>@(w.Person.firstName + ' ' + w.Person.surName)</th>
-                            @if (!w.Project.isDone)
-                            {
-                                <th>В работе</th>}
-                            @if (w.Project.isDone && !w.Project.isClose)
-                            {
-                                <th>Завершён</th>}
-                            @if (w.Project.isClose)
-                            {
-                                <th>Закрыт</th>}
-                            <th>@Html.ActionLink("Подробнее", "Work", "Manager", new { projectId = w.Project.IdProject }, new { @class = "btn" })</th>
-                            <th>@Html.ActionLink(" ", "DeleteWork", "Manager", new { workId = w.Project.IdProject, projectId = Model.IdProject }, new { @class = "btn glyphicon glyphicon-remove" })</th>
-                        </tr>
-                    }
-                }
-            </table>
         </div>
         <div id="report-content" class="tab-content">
             @{ Html.RenderPartial("Report", new ManagerReportViewModel(@Model));}

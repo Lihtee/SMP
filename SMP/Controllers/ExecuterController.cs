@@ -18,7 +18,7 @@ namespace SMP.Controllers
         {
             _DataManager = _DM;
         }
-        // GET: Executer
+        // GET: ExecutorName
         public ActionResult Index()
         {
             var vm = new ExecutorIndexViewModel(((Person)Session["user"]).IdPerson);

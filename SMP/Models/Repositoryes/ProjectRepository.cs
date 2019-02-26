@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
 using System.Web;
+using SMP.Models.MailSender;
 
 namespace SMP.Models.Repositoryes
 {
@@ -61,26 +62,21 @@ namespace SMP.Models.Repositoryes
         /// Удаляет проект/работу по Id
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="onDeleteEvent"></param>
         public void DeleteProject(int id, int startID)
         {
+            
             foreach (var p in GetProjectsByParrentId(id))
             {
                 DeleteProject(p.IdProject, startID);
             }
 
-            foreach (var t in cont.Team.Where(team => team.Project.IdProject == id).ToList())
+            foreach (var t in cont.Team.Where(team => team.Project.IdProject == id))
             {
+                //Отправить уведомление об отмене работы.
+                var sender = new MailSender.MailSender();
+                sender.Send(new WordCanceledMail(t.Person.email, GetProjectById(id)));
                 cont.Team.Remove(t);
-            }
-
-            foreach (var a in cont.Addiction.Where(addiction => addiction.lastProject.IdProject == id || addiction.nextProject.IdProject == id).ToList())
-            {
-                cont.Addiction.Remove(a);
-            }
-
-            foreach (var a in cont.Addiction.Where(addiction => addiction.lastProject.IdProject == id || addiction.nextProject.IdProject == id).ToList())
-            {
-                cont.Addiction.Remove(a);
             }
 
             cont.Project.Remove(cont.Project.Find(id));
@@ -211,7 +207,7 @@ namespace SMP.Models.Repositoryes
         }
 
         /// <summary>
-        /// Возвращает проект верхнего уровня для проекта нижнего уровня.
+        /// Возвращает проект самого верхнего уровня для проекта нижнего уровня.
         /// </summary>
         /// <param name="child">Проект нижнего уровня</param>
         /// <returns></returns>
@@ -228,7 +224,7 @@ namespace SMP.Models.Repositoryes
         }
 
         /// <summary>
-        /// Возвращает проект верхнего уровня для проекта нижнего уровня.
+        /// Возвращает проект самого верхнего уровня для проекта нижнего уровня.
         /// </summary>
         /// <param name="child">Id проекта нижнего уровня</param>
         /// <returns></returns>
