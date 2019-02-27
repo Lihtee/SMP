@@ -436,9 +436,9 @@ namespace SMP.Controllers
             }
 
             int id = Convert.ToInt32(projectId);
-            Project project = _DataManager.projectRepository.GetProjectById(id).parrentProject;
-            if (start < project.startDateTime || start > project.endDateTime ||
-                end < project.startDateTime || end > project.endDateTime)
+            Project parrentProject = _DataManager.projectRepository.GetProjectById(id).parrentProject;
+            if (start < parrentProject.startDateTime || start > parrentProject.endDateTime ||
+                end < parrentProject.startDateTime || end > parrentProject.endDateTime)
             {
                 ModelState.AddModelError("ProjectLength", "Начало или конец работы выходят за пределы проекта");
             }
@@ -464,7 +464,13 @@ namespace SMP.Controllers
                     return RedirectToAction("Work", new { projectId = p.parrentProject.IdProject });
             }
 
-            var vm = new WorkWievModel(project);
+            // Во view отправляется неизмененная работа, как раньше. 
+            // Todo Надо переделать так, чтобы во view отправлялась работа с теми же значениями полей.
+            // Для этого можно улучшить структуру view model:
+            // создать группу "валидных" значений, с которыми можно делать логику,
+            // и группу значений "для показа", в которую смогут входить как валидные, так и не валидные, с этой группой не будет никакой логики.
+            // Для этого нужно будет убрать валидацию модели из контроллеров
+            var vm = new WorkWievModel(_DataManager.projectRepository.GetProjectById(id));
             return View(vm);
         }
 
